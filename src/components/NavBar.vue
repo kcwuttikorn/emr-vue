@@ -94,7 +94,7 @@ export default {
     return {
       drawer: false,
       links: [
-        { icon: "mdi-home", text: "Home", route: "/" },
+        { icon: "mdi-home", text: "Slam", route: "/" },
         { icon: "mdi-new-box", text: "Navigation", route: "/navigation" },
         { icon: "mdi-application-cog", text: "Program", route: "/program" },
         { icon: "mdi-application-cog", text: "Setting", route: "/setting" },
