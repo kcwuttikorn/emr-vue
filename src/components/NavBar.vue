@@ -8,7 +8,7 @@
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon>
 
-      <v-row :align="align" no-gutters>
+      <v-row no-gutters>
         <v-col cols="4">
           <v-toolbar-title class="text-uppercase white--grey">
             <span class="font-weight-light">Emr-</span>

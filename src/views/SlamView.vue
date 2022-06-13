@@ -2,7 +2,7 @@
   <div class="home">
     <v-container fluid >
       <!-- <h1 class="subheading grey--text">SLAM</h1> -->
-      <v-row :align="align" no-gutters>
+      <v-row no-gutters>
         <v-col cols="6" >
           <v-layout column align-center>
             <v-card fluid
@@ -92,7 +92,7 @@
 //import HelloWorld from '../components/HelloWorld'
 
 export default {
-  name: "home",
+  name: "slam",
 
   components: {
     //HelloWorld,
