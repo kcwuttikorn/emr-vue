@@ -58,6 +58,7 @@
               height="600px"
               width="860px"
               class="yellow lighten-5 pa-2 ma-2"
+              outlined
             >
             </v-card>
           </v-layout>
@@ -65,39 +66,51 @@
 
         <v-col cols="4">
           <!-- <v-container fluid > -->
-          <v-layout column align-center>
-            <v-card height="500px" width="500px" class="grey lighten-5 my-2">
+          <v-layout column align-center >
+            <v-card height="170x" width="500px" class="grey lighten-5 my-2 pa-3"> 
+            
               <v-row dense> 
                 <v-col cols="4" class="d-flex justify-center"></v-col>
                 <v-col cols="4" class="d-flex justify-center">
-                  <v-btn color="primary" elevation="2"  outlined>FW</v-btn>
+                  <v-btn color="primary" large outlined>
+                    <!-- <span>TR</span>      -->
+                    <v-icon large>mdi-arrow-up-bold-outline</v-icon>             
+                  </v-btn>
                 </v-col>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
               </v-row>
               <v-row dense> 
                 <v-col cols="4" class="d-flex justify-end">
-                  <v-btn color="primary" elevation="2" outlined>TL</v-btn>
+                  <v-btn color="primary" large outlined>                       
+                    <v-icon large>mdi-arrow-left-bold-outline</v-icon> 
+                    <!-- <span>TL</span>  --> 
+                  </v-btn>
                 </v-col>
-                <v-col cols="4" class="d-flex justify-center"></v-col>
+                <v-col cols="4" class="d-flex justify-center">
+                  <v-btn color="primary" large outlined>                       
+                    <v-icon large>mdi-stop</v-icon> 
+                    <!-- <span>TL</span>  --> 
+                  </v-btn>
+                </v-col>
                 <v-col cols="4" class="d-flex justify-start">
-                  <v-btn color="primary" elevation="2" outlined>TR</v-btn>
+                  <v-btn color="primary"  large outlined>
+                    <!-- <span>TR</span>      -->
+                    <v-icon large>mdi-arrow-right-bold-outline</v-icon>             
+                  </v-btn>
                 </v-col>
               </v-row>
               <v-row dense> 
                 <v-col cols="4" class="d-flex justify-center"></v-col>
                 <v-col cols="4" class="d-flex justify-center">
-                  <v-btn color="primary" elevation="2" outlined>BW</v-btn>
+                  <v-btn color="primary" large outlined>
+                    <!-- <span>TR</span>      -->
+                    <v-icon large>mdi-arrow-down-bold-outline</v-icon>             
+                  </v-btn>
                 </v-col>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
               </v-row>
                   
-        
-              
-                
-
-
-
-                  <!-- <v-btn color="primary" elevation="2" fab outlined></v-btn>
+         <!-- <v-btn color="primary" elevation="2" fab outlined></v-btn>
                   <v-btn color="primary" elevation="2" fab outlined></v-btn>
                   <v-btn color="primary" elevation="2" fab outlined></v-btn> -->
 
@@ -105,13 +118,8 @@
               <!-- <v-btn text color="white-grey">
                     <span>Connect</span>
                     <v-icon right>mdi-exit-to-app</v-icon>
-                  </v-btn> -->
-              
-              <v-layout>
-                <v-flex xs12 md3>
-                  <v-btn color="primary" elevation="2" fab outlined></v-btn>
-                </v-flex>
-              </v-layout>
+                  </v-btn> -->              
+          
             </v-card>
           </v-layout>
 
@@ -119,17 +127,20 @@
             <v-flex>
               <v-data-table
                 :headers="headers"
-                :items="desserts"
-                sort-by="calories"
+                :items="maps"
+                sort-by="Maps"
                 class="elevation-1"
+                fixed-header
+                height="380px"
+                
               >
                 <template v-slot:top>
                   <v-toolbar flat>
-                    <v-toolbar-title>My CRUD</v-toolbar-title>
+                    <v-toolbar-title>Slam-Map</v-toolbar-title>
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
 
-                    <v-dialog v-model="dialog" max-width="500px">
+                    <v-dialog v-model="dialog" max-width="500px"> 
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="primary"
@@ -153,33 +164,9 @@
                               <v-col cols="12" sm="6" md="4">
                                 <v-text-field
                                   v-model="editedItem.name"
-                                  label="Dessert name"
+                                  label="Map name"
                                 ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  v-model="editedItem.calories"
-                                  label="Calories"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  v-model="editedItem.fat"
-                                  label="Fat (g)"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  v-model="editedItem.carbs"
-                                  label="Carbs (g)"
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  v-model="editedItem.protein"
-                                  label="Protein (g)"
-                                ></v-text-field>
-                              </v-col>
+                              </v-col>                              
                             </v-row>
                           </v-container>
                         </v-card-text>
@@ -219,12 +206,14 @@
                     </v-dialog>
                   </v-toolbar>
                 </template>
+
                 <template v-slot:item.actions="{ item }">
                   <v-icon small class="mr-2" @click="editItem(item)">
                     mdi-pencil
                   </v-icon>
                   <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
                 </template>
+
               </v-data-table>
             </v-flex>
           </v-layout>
@@ -249,32 +238,23 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        text: "Dessert (100g serving)",
+        text: "Maps",
         align: "start",
         sortable: false,
         value: "name",
-      },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
+      },      
       { text: "Actions", value: "actions", sortable: false },
     ],
-    desserts: [],
+    // desserts: [],
+    maps: [],
     editedIndex: -1,
     editedItem: {
       name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      
     },
     defaultItem: {
       name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
+      
     },
   }),
 
@@ -299,94 +279,46 @@ export default {
 
   methods: {
     initialize() {
-      this.desserts = [
+      this.maps = [
         {
-          name: "Frozen Yogurt",
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
+          name: "Nectec Floor 1st",
+          
         },
         {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
+          name: "Nectec Floor 2nd",
+          
         },
         {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
+          name: "Nectec Floor 3rd",
+          
         },
         {
-          name: "Cupcake",
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
+          name: "Nectec Floor 4th",
+          
         },
         {
-          name: "Gingerbread",
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
+          name: "Nectec Floor 5th",
+          
         },
-        {
-          name: "Jelly bean",
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-        },
-        {
-          name: "Lollipop",
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-        },
-        {
-          name: "Honeycomb",
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-        },
-        {
-          name: "Donut",
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-        },
-        {
-          name: "KitKat",
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-        },
+        
+    
       ];
     },
 
     editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.maps.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
     deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+      this.editedIndex = this.maps.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
     deleteItemConfirm() {
-      this.desserts.splice(this.editedIndex, 1);
+      this.maps.splice(this.editedIndex, 1);
       this.closeDelete();
     },
 
@@ -408,9 +340,9 @@ export default {
 
     save() {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem);
+        Object.assign(this.maps[this.editedIndex], this.editedItem);
       } else {
-        this.desserts.push(this.editedItem);
+        this.maps.push(this.editedItem);
       }
       this.close();
     },
