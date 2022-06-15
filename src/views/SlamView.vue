@@ -66,60 +66,61 @@
 
         <v-col cols="4">
           <!-- <v-container fluid > -->
-          <v-layout column align-center >
-            <v-card height="170x" width="500px" class="grey lighten-5 my-2 pa-3"> 
-            
-              <v-row dense> 
+          <v-layout column align-center>
+            <v-card
+              height="170x"
+              width="500px"
+              class="grey lighten-5 my-2 pa-3"
+            >
+              <v-row dense>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
                 <v-col cols="4" class="d-flex justify-center">
                   <v-btn color="primary" large outlined>
                     <!-- <span>TR</span>      -->
-                    <v-icon large>mdi-arrow-up-bold-outline</v-icon>             
+                    <v-icon large>mdi-arrow-up-bold-outline</v-icon>
                   </v-btn>
                 </v-col>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
               </v-row>
-              <v-row dense> 
+              <v-row dense>
                 <v-col cols="4" class="d-flex justify-end">
-                  <v-btn color="primary" large outlined>                       
-                    <v-icon large>mdi-arrow-left-bold-outline</v-icon> 
-                    <!-- <span>TL</span>  --> 
+                  <v-btn color="primary" large outlined>
+                    <v-icon large>mdi-arrow-left-bold-outline</v-icon>
+                    <!-- <span>TL</span>  -->
                   </v-btn>
                 </v-col>
                 <v-col cols="4" class="d-flex justify-center">
-                  <v-btn color="primary" large outlined>                       
-                    <v-icon large>mdi-stop</v-icon> 
-                    <!-- <span>TL</span>  --> 
+                  <v-btn color="primary" large outlined>
+                    <v-icon large>mdi-stop</v-icon>
+                    <!-- <span>TL</span>  -->
                   </v-btn>
                 </v-col>
                 <v-col cols="4" class="d-flex justify-start">
-                  <v-btn color="primary"  large outlined>
+                  <v-btn color="primary" large outlined>
                     <!-- <span>TR</span>      -->
-                    <v-icon large>mdi-arrow-right-bold-outline</v-icon>             
+                    <v-icon large>mdi-arrow-right-bold-outline</v-icon>
                   </v-btn>
                 </v-col>
               </v-row>
-              <v-row dense> 
+              <v-row dense>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
                 <v-col cols="4" class="d-flex justify-center">
                   <v-btn color="primary" large outlined>
                     <!-- <span>TR</span>      -->
-                    <v-icon large>mdi-arrow-down-bold-outline</v-icon>             
+                    <v-icon large>mdi-arrow-down-bold-outline</v-icon>
                   </v-btn>
                 </v-col>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
               </v-row>
-                  
-         <!-- <v-btn color="primary" elevation="2" fab outlined></v-btn>
+
+              <!-- <v-btn color="primary" elevation="2" fab outlined></v-btn>
                   <v-btn color="primary" elevation="2" fab outlined></v-btn>
                   <v-btn color="primary" elevation="2" fab outlined></v-btn> -->
-
 
               <!-- <v-btn text color="white-grey">
                     <span>Connect</span>
                     <v-icon right>mdi-exit-to-app</v-icon>
-                  </v-btn> -->              
-          
+                  </v-btn> -->
             </v-card>
           </v-layout>
 
@@ -132,7 +133,6 @@
                 class="elevation-1"
                 fixed-header
                 height="380px"
-                
               >
                 <template v-slot:top>
                   <v-toolbar flat>
@@ -140,7 +140,7 @@
                     <v-divider class="mx-4" inset vertical></v-divider>
                     <v-spacer></v-spacer>
 
-                    <v-dialog v-model="dialog" max-width="500px"> 
+                    <v-dialog v-model="dialog" max-width="500px">
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
                           color="primary"
@@ -165,8 +165,33 @@
                                 <v-text-field
                                   v-model="editedItem.name"
                                   label="Map name"
-                                ></v-text-field>
-                              </v-col>                              
+                                ></v-text-field>                                
+                              </v-col>
+                              <v-col cols="12" sm="6" md="4">
+                                <v-menu
+                                  v-model="menu2"
+                                  :close-on-content-click="false"
+                                  :nudge-right="40"
+                                  transition="scale-transition"
+                                  offset-y
+                                  min-width="auto"
+                                >
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-text-field
+                                      v-model="date"
+                                      label="Create Map Date:"
+                                      prepend-icon="mdi-calendar"
+                                      readonly
+                                      v-bind="attrs"
+                                      v-on="on"
+                                    ></v-text-field>
+                                  </template>
+                                  <v-date-picker
+                                    v-model="date"
+                                    @input="menu2 = false"
+                                  ></v-date-picker>
+                                </v-menu>
+                              </v-col>
                             </v-row>
                           </v-container>
                         </v-card-text>
@@ -213,7 +238,6 @@
                   </v-icon>
                   <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
                 </template>
-
               </v-data-table>
             </v-flex>
           </v-layout>
@@ -226,13 +250,12 @@
 
 <script>
 //import HelloWorld from '../components/HelloWorld'
+import axios from "axios";
+const baseURL = "http://localhost:3001/maps";
 
 export default {
   name: "slam",
 
-  components: {
-    //HelloWorld,
-  },
   data: () => ({
     dialog: false,
     dialogDelete: false,
@@ -242,21 +265,39 @@ export default {
         align: "start",
         sortable: false,
         value: "name",
-      },      
+      },
       { text: "Actions", value: "actions", sortable: false },
     ],
     // desserts: [],
     maps: [],
     editedIndex: -1,
+
     editedItem: {
       name: "",
-      
+      date: ""
     },
     defaultItem: {
       name: "",
-      
+      date: ""
     },
+    mapForm: {
+      name: "",
+      date: ""
+    },
+    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      // menu: false,
+      // modal: false,
+    menu2: false,
   }),
+  async created(){
+    try{
+      const res = await axios.get(baseURL);
+      this.maps = res.data;
+      //console.log(res.data)
+    } catch(e){
+      console.log(e);
+    }
+  },
 
   computed: {
     formTitle() {
@@ -273,36 +314,45 @@ export default {
     },
   },
 
-  created() {
-    this.initialize();
-  },
+  // created() {
+  //   this.initialize();
+  // },
 
   methods: {
     initialize() {
       this.maps = [
         {
           name: "Nectec Floor 1st",
-          
+
         },
         {
           name: "Nectec Floor 2nd",
-          
+
         },
         {
           name: "Nectec Floor 3rd",
-          
+
         },
         {
           name: "Nectec Floor 4th",
-          
+
         },
         {
           name: "Nectec Floor 5th",
-          
+
         },
-        
-    
+
+
       ];
+    },
+    async addMap(mapForm){
+      try{
+        const res = await axios.post(baseURL, mapForm);
+        this.maps = [...this.maps, res.data];
+        //console.log(this.map);
+      }catch(e){
+        console.log(e);
+      }
     },
 
     editItem(item) {
@@ -342,7 +392,20 @@ export default {
       if (this.editedIndex > -1) {
         Object.assign(this.maps[this.editedIndex], this.editedItem);
       } else {
-        this.maps.push(this.editedItem);
+        
+
+       // this.editedItem.date = this.date;
+        //this.maps.push(this.editedItem);
+
+        this.mapForm.name = this.editedItem.name;
+        this.mapForm.date = this.date;
+        this.addMap(this.mapForm);
+
+        //console.log(this.editedItem);
+        
+        //this.mapForm.name = this.editedItem.name;
+        //this.mapForm.date = this.editedItem.date;
+        //this.addMap(this.mapForm);
       }
       this.close();
     },
