@@ -1,0 +1,9 @@
+{
+    "maps":[
+        { "name": "Nectec Floor1","date": "2022-05-19" },
+        { "name": "Nectec Floor2","date": "2022-05-20" },
+        { "name": "Nectec Floor3","date": "2022-05-15" },
+        { "name": "Nectec Floor4","date": "2022-05-10" },
+        { "name": "Nectec Floor5","date": "2022-05-17" }        
+    ]
+}
