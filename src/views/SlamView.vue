@@ -354,7 +354,7 @@ export default {
         console.log(e);
       }
     },
-
+    
     editItem(item) {
       this.editedIndex = this.maps.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -388,9 +388,28 @@ export default {
       });
     },
 
+//return this.editedIndex === -1 ? "New Item" : "Edit Item";
+    
     save() {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex > -1) {   
         Object.assign(this.maps[this.editedIndex], this.editedItem);
+
+        try{
+          axios.patch(`${baseURL}/${this.editedIndex}`,{
+          name: this.editedItem.name,
+          date: this.date
+          });
+        }catch(e){
+          console.error(e);
+        }
+
+        
+        
+
+        //editMap(this.editedIndex);
+        //editMapName(this.mapForm)
+        
+
       } else {
         
 
@@ -399,6 +418,7 @@ export default {
 
         this.mapForm.name = this.editedItem.name;
         this.mapForm.date = this.date;
+        
         this.addMap(this.mapForm);
 
         //console.log(this.editedItem);
