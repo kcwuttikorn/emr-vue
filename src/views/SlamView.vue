@@ -273,14 +273,17 @@ export default {
     editedIndex: -1,
 
     editedItem: {
+      id: null,
       name: "",
       date: ""
     },
     defaultItem: {
+      id: null,
       name: "",
       date: ""
     },
     mapForm: {
+      id: null,
       name: "",
       date: ""
     },
@@ -354,7 +357,7 @@ export default {
         console.log(e);
       }
     },
-    
+       
     editItem(item) {
       this.editedIndex = this.maps.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -368,6 +371,9 @@ export default {
     },
 
     deleteItemConfirm() {
+      axios.delete(`${baseURL}/${this.editedItem.id}`)
+      //this.maps = this.maps.filter(map => map.id !== id)    
+
       this.maps.splice(this.editedIndex, 1);
       this.closeDelete();
     },
@@ -394,38 +400,21 @@ export default {
       if (this.editedIndex > -1) {   
         Object.assign(this.maps[this.editedIndex], this.editedItem);
 
+        //console.log(this.editedIndex)
         try{
-          axios.patch(`${baseURL}/${this.editedIndex}`,{
+          axios.patch(`${baseURL}/${this.editedItem.id}`,{
           name: this.editedItem.name,
-          date: this.date
+          date: this.date,
+          id: this.editedItem.id
           });
         }catch(e){
           console.error(e);
         }
-
+      } else { 
         
-        
-
-        //editMap(this.editedIndex);
-        //editMapName(this.mapForm)
-        
-
-      } else {
-        
-
-       // this.editedItem.date = this.date;
-        //this.maps.push(this.editedItem);
-
         this.mapForm.name = this.editedItem.name;
-        this.mapForm.date = this.date;
-        
+        this.mapForm.date = this.date;        
         this.addMap(this.mapForm);
-
-        //console.log(this.editedItem);
-        
-        //this.mapForm.name = this.editedItem.name;
-        //this.mapForm.date = this.editedItem.date;
-        //this.addMap(this.mapForm);
       }
       this.close();
     },
