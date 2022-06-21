@@ -3,7 +3,7 @@
     <v-container fluid class="blue pa-2">
       <v-row no-gutters>
         <v-col cols="8">
-          <v-layout column align-center>
+          <v-layout column align-start>
             <v-card
               fluid
               height="70px"
