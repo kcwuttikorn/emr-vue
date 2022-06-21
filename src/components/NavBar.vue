@@ -49,8 +49,12 @@
     >
       <v-layout column align-center>
         <v-flex class="mt-5">
-          <v-avatar size="200">
-            <v-img src="../../public/index.jpeg"></v-img>
+          <v-avatar size="200" rounded>
+            <v-img 
+              height="100%" width="100%"
+              src="../../public/emr-picture.jpg" 
+           
+            ></v-img>
           </v-avatar>
         </v-flex>
 

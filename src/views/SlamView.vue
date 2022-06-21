@@ -273,14 +273,17 @@ export default {
     editedIndex: -1,
 
     editedItem: {
+      id: null,
       name: "",
       date: ""
     },
     defaultItem: {
+      id: null,
       name: "",
       date: ""
     },
     mapForm: {
+      id: null,
       name: "",
       date: ""
     },
@@ -368,6 +371,8 @@ export default {
     },
 
     deleteItemConfirm() {
+      
+      axios.delete(`${baseURL}/${this.editedItem.id}`);
       this.maps.splice(this.editedIndex, 1);
       this.closeDelete();
     },
@@ -395,23 +400,19 @@ export default {
         Object.assign(this.maps[this.editedIndex], this.editedItem);
 
         try{
-          axios.patch(`${baseURL}/${this.editedIndex}`,{
+          axios.patch(`${baseURL}/${this.editedItem.id}`,{
           name: this.editedItem.name,
           date: this.date
           });
         }catch(e){
           console.error(e);
         }
-
-        
-        
-
+ 
         //editMap(this.editedIndex);
         //editMapName(this.mapForm)
         
 
       } else {
-        
 
        // this.editedItem.date = this.date;
         //this.maps.push(this.editedItem);
