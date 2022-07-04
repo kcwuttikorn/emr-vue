@@ -50,7 +50,7 @@
                   <div class="caption grey--text mx-7">W:</div>
                   <div class="blue--text grey lighten-2 mx-1 px-2">0.001</div>
                 </v-flex>
-              </v-layout>            
+              </v-layout>
             </v-card>
 
             <v-card
@@ -61,18 +61,45 @@
             ></v-card>
           </v-layout>
         </v-col>
+
+        <v-col cols="4">
+          <v-layout column align-start>
+            <v-card
+              height="170x"
+              width="435px"
+              class="yellow lighten-5 pa-2 ma-2"
+              outlined
+            >
+              <v-row no-gutters>
+                <v-col cols="4">
+                  <v-btn color="primary" elevation="2" block outlined>Initial Pose</v-btn>
+                </v-col>
+                  
+                <v-col cols="4"> 
+                  <v-btn color="primary" elevation="2" block outlined>Navigate</v-btn>
+                </v-col>
+
+                <v-col cols="4">
+                  <v-btn color="primary" elevation="2" block outlined>Go Home</v-btn>
+                </v-col>
+              </v-row>
+
+            </v-card>
+          </v-layout>
+        </v-col>
       </v-row>
     </v-container>
-    
   </div>
 </template>
 
 <script>
 export default {
-  name:'navigation'
-}
+  name: "navigation",
+};
 </script>
 
 <style>
-
 </style>
+
+
+

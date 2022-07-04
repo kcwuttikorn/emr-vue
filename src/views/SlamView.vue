@@ -112,132 +112,128 @@
                 </v-col>
                 <v-col cols="4" class="d-flex justify-center"></v-col>
               </v-row>
-
-              <!-- <v-btn color="primary" elevation="2" fab outlined></v-btn>
-                  <v-btn color="primary" elevation="2" fab outlined></v-btn>
-                  <v-btn color="primary" elevation="2" fab outlined></v-btn> -->
-
-              <!-- <v-btn text color="white-grey">
-                    <span>Connect</span>
-                    <v-icon right>mdi-exit-to-app</v-icon>
-                  </v-btn> -->
             </v-card>
 
             <v-card class="grey lighten-5 ma-2 pa-2">
               <v-flex>
-              <v-data-table
-                :headers="headers"
-                :items="maps"
-                sort-by="Maps"
-                class="elevation-1"
-                fixed-header
-                height="365px"
-              >
-                <template v-slot:top>
-                  <v-toolbar flat>
-                    <v-toolbar-title>Slam-Map</v-toolbar-title>
-                    <v-divider class="mx-4" inset vertical></v-divider>
-                    <v-spacer></v-spacer>
+                <v-data-table
+                  :headers="headers"
+                  :items="maps"
+                  sort-by="Maps"
+                  class="elevation-1"
+                  fixed-header
+                  height="365px"
+                >
+                  <template v-slot:top>
+                    <v-toolbar flat>
+                      <v-toolbar-title>Slam-Map</v-toolbar-title>
+                      <v-divider class="mx-4" inset vertical></v-divider>
+                      <v-spacer></v-spacer>
 
-                    <v-dialog v-model="dialog" max-width="500px">
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          color="primary"
-                          dark
-                          class="mb-2"
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          New Item
-                        </v-btn>
-                      </template>
-
-                      <v-card>
-                        <v-card-title>
-                          <span class="text-h5">{{ formTitle }}</span>
-                        </v-card-title>
-
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                  v-model="editedItem.name"
-                                  label="Map name"
-                                ></v-text-field>                                
-                              </v-col>
-                              <v-col cols="12" sm="6" md="4">
-                                <v-menu
-                                  v-model="menu2"
-                                  :close-on-content-click="false"
-                                  :nudge-right="40"
-                                  transition="scale-transition"
-                                  offset-y
-                                  min-width="auto"
-                                >
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-text-field
-                                      v-model="date"
-                                      label="Create Map Date:"
-                                      prepend-icon="mdi-calendar"
-                                      readonly
-                                      v-bind="attrs"
-                                      v-on="on"
-                                    ></v-text-field>
-                                  </template>
-                                  <v-date-picker
-                                    v-model="date"
-                                    @input="menu2 = false"
-                                  ></v-date-picker>
-                                </v-menu>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn color="blue darken-1" text @click="close">
-                            Cancel
-                          </v-btn>
-                          <v-btn color="blue darken-1" text @click="save">
-                            Save
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-
-                    <v-dialog v-model="dialogDelete" max-width="500px">
-                      <v-card>
-                        <v-card-title class="text-h5"
-                          >Are you sure you want to delete this
-                          item?</v-card-title
-                        >
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn color="blue darken-1" text @click="closeDelete"
-                            >Cancel</v-btn
-                          >
+                      <v-dialog v-model="dialog" max-width="500px">
+                        <template v-slot:activator="{ on, attrs }">
                           <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="deleteItemConfirm"
-                            >OK</v-btn
+                            color="primary"
+                            dark
+                            class="mb-2"
+                            v-bind="attrs"
+                            v-on="on"
                           >
-                          <v-spacer></v-spacer>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-toolbar>
-                </template>
+                            New Item
+                          </v-btn>
+                        </template>
 
-                <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-2" @click="editItem(item)">
-                    mdi-pencil
-                  </v-icon>
-                  <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-                </template>
-              </v-data-table>
+                        <v-card>
+                          <v-card-title>
+                            <span class="text-h5">{{ formTitle }}</span>
+                          </v-card-title>
+
+                          <v-card-text>
+                            <v-container>
+                              <v-row>
+                                <v-col cols="12" sm="6" md="4">
+                                  <v-text-field
+                                    v-model="editedItem.name"
+                                    label="Map name"
+                                  ></v-text-field>
+                                </v-col>
+                                <v-col cols="12" sm="6" md="4">
+                                  <v-menu
+                                    v-model="menu2"
+                                    :close-on-content-click="false"
+                                    :nudge-right="40"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-text-field
+                                        v-model="date"
+                                        label="Create Map Date:"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        v-bind="attrs"
+                                        v-on="on"
+                                      ></v-text-field>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="date"
+                                      @input="menu2 = false"
+                                    ></v-date-picker>
+                                  </v-menu>
+                                </v-col>
+                              </v-row>
+                            </v-container>
+                          </v-card-text>
+
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn color="blue darken-1" text @click="close">
+                              Cancel
+                            </v-btn>
+                            <v-btn color="blue darken-1" text @click="save">
+                              Save
+                            </v-btn>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+
+                      <v-dialog v-model="dialogDelete" max-width="500px">
+                        <v-card>
+                          <v-card-title class="text-h5"
+                            >Are you sure you want to delete this
+                            item?</v-card-title
+                          >
+                          <v-card-actions>
+                            <v-spacer></v-spacer>
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="closeDelete"
+                              >Cancel</v-btn
+                            >
+                            <v-btn
+                              color="blue darken-1"
+                              text
+                              @click="deleteItemConfirm"
+                              >OK</v-btn
+                            >
+                            <v-spacer></v-spacer>
+                          </v-card-actions>
+                        </v-card>
+                      </v-dialog>
+                    </v-toolbar>
+                  </template>
+
+                  <template v-slot:item.actions="{ item }">
+                    <v-icon small class="mr-2" @click="editItem(item)">
+                      mdi-pencil
+                    </v-icon>
+                    <v-icon small @click="deleteItem(item)">
+                      mdi-delete
+                    </v-icon>
+                  </template>
+                </v-data-table>
               </v-flex>
             </v-card>
           </v-layout>
@@ -393,29 +389,31 @@ export default {
     editedItem: {
       id: null,
       name: "",
-      date: ""
+      date: "",
     },
     defaultItem: {
       id: null,
       name: "",
-      date: ""
+      date: "",
     },
     mapForm: {
       id: null,
       name: "",
-      date: ""
+      date: "",
     },
-    date: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
-      // menu: false,
-      // modal: false,
+    date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substr(0, 10),
+    // menu: false,
+    // modal: false,
     menu2: false,
   }),
-  async created(){
-    try{
+  async created() {
+    try {
       const res = await axios.get(baseURL);
       this.maps = res.data;
       //console.log(res.data)
-    } catch(e){
+    } catch (e) {
       console.log(e);
     }
   },
@@ -444,38 +442,31 @@ export default {
       this.maps = [
         {
           name: "Nectec Floor 1st",
-
         },
         {
           name: "Nectec Floor 2nd",
-
         },
         {
           name: "Nectec Floor 3rd",
-
         },
         {
           name: "Nectec Floor 4th",
-
         },
         {
           name: "Nectec Floor 5th",
-
         },
-
-
       ];
     },
-    async addMap(mapForm){
-      try{
+    async addMap(mapForm) {
+      try {
         const res = await axios.post(baseURL, mapForm);
         this.maps = [...this.maps, res.data];
         //console.log(this.map);
-      }catch(e){
+      } catch (e) {
         console.log(e);
       }
     },
-    
+
     editItem(item) {
       this.editedIndex = this.maps.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -489,7 +480,6 @@ export default {
     },
 
     deleteItemConfirm() {
-      
       axios.delete(`${baseURL}/${this.editedItem.id}`);
       this.maps.splice(this.editedIndex, 1);
       this.closeDelete();
@@ -511,37 +501,34 @@ export default {
       });
     },
 
-//return this.editedIndex === -1 ? "New Item" : "Edit Item";
-    
+    //return this.editedIndex === -1 ? "New Item" : "Edit Item";
+
     save() {
-      if (this.editedIndex > -1) {   
+      if (this.editedIndex > -1) {
         Object.assign(this.maps[this.editedIndex], this.editedItem);
 
-        try{
-          axios.patch(`${baseURL}/${this.editedItem.id}`,{
-          name: this.editedItem.name,
-          date: this.date
+        try {
+          axios.patch(`${baseURL}/${this.editedItem.id}`, {
+            name: this.editedItem.name,
+            date: this.date,
           });
-        }catch(e){
+        } catch (e) {
           console.error(e);
         }
- 
+
         //editMap(this.editedIndex);
         //editMapName(this.mapForm)
-        
-
       } else {
-
-       // this.editedItem.date = this.date;
+        // this.editedItem.date = this.date;
         //this.maps.push(this.editedItem);
 
         this.mapForm.name = this.editedItem.name;
         this.mapForm.date = this.date;
-        
+
         this.addMap(this.mapForm);
 
         //console.log(this.editedItem);
-        
+
         //this.mapForm.name = this.editedItem.name;
         //this.mapForm.date = this.editedItem.date;
         //this.addMap(this.mapForm);
