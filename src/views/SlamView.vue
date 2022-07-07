@@ -408,6 +408,10 @@ export default {
     // modal: false,
     menu2: false,
   }),
+  mounted(){
+    //this.$store.state.modeName = 'Slam Mode';
+    this.$store.dispatch('actionModeName', 'Slam Mode');
+  },
   async created() {
     try {
       const res = await axios.get(baseURL);

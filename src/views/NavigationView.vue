@@ -95,6 +95,15 @@
 <script>
 export default {
   name: "navigation",
+  data() {
+    return {
+      
+    }
+  },
+  mounted(){
+    //this.$store.state.modeName = 'Navigation Mode';
+    this.$store.dispatch('actionModeName', 'Navigation Mode');
+  },
 };
 </script>
 

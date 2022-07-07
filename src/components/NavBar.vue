@@ -16,7 +16,12 @@
           </v-toolbar-title>
         </v-col>
 
-        <v-col cols="4"> </v-col>
+        <v-col cols="4"> 
+          <v-toolbar-title class="text-uppercase white--grey">
+            <!-- <span class="font-weight-light">Emr-</span> -->
+            <span>{{$store.state.modeName}}</span>
+          </v-toolbar-title>
+        </v-col>
 
         <v-col cols="4" class="d-flex justify-end">
           
@@ -104,6 +109,9 @@ export default {
         { icon: "mdi-application-cog", text: "Setting", route: "/setting" },
       ],
     };
+  },
+  mounted(){
+    this.$store.state.modeName = 'Slam Mode';
   },
 };
 </script>
