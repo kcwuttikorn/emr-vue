@@ -16,6 +16,7 @@ export default new Vuex.Store({
   },
   getters: {
     getModeName: (state) => state.modeName,
+    getRbServer: (state) => state.rbServer,
     getServerConnected: (state) =>state.serverConnected,
     getIsSlamRunning: (state) => state.isSlamRunning,
     getIsNavRunning: (state) => state.isNavRunning,
@@ -48,6 +49,7 @@ export default new Vuex.Store({
     setSelectedWayPoint(state, data){
       state.selectedWayPoint = data;
     },
+    
   },
   actions: {
     actionModeName(context, value){
@@ -55,6 +57,9 @@ export default new Vuex.Store({
     },
     actionRbServer(context, value){
       context.commit('setRbServer', value);
+    },
+    actionServerConnected(context, value){
+      context.commit('setServerConnected', value);
     },
     actionIsSlamRunning(context, value){
       context.commit('setIsSlamRunning', value);

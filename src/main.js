@@ -6,6 +6,8 @@ import vuetify from './plugins/vuetify'
 
 Vue.config.productionTip = false
 
+Vue.config.ignoredElements = ['field','block','category','xml','mutation','value','sep']
+
 new Vue({
   router,
   store,
