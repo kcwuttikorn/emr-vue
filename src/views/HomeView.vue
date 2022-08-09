@@ -1,16 +1,15 @@
 <template>
   <div class="home">
-    <v-container fluid >
+    <v-container fluid>
       <!-- <v-row class="yellow lighten-5" > -->
       <v-row>
         <v-col cols="6">
-          <DisplayPose />          
+          <DisplayPose />
         </v-col>
         <v-col cols="6">
-          <SideBar />
-          <JoyControl />
+          <SideBar class="py-2" />
+          <JoyControl class="py-2" />
         </v-col>
-        
       </v-row>
     </v-container>
   </div>
@@ -29,7 +28,11 @@ export default {
   components: {
     DisplayPose,
     SideBar,
-    JoyControl
-},
+    JoyControl,
+  },
+  mounted(){
+    //this.$store.state.modeName = 'Slam Mode';
+    this.$store.dispatch('actionModeName', 'Slam Mode');
+  },
 };
 </script>

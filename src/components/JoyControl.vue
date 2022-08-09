@@ -14,13 +14,13 @@
           
           <v-row>
             <v-col >
-              <v-btn color="primary" elevation="2" block outlined
+              <v-btn color="primary" elevation="2" block outlined class="py-2"
                 >Pose estimate</v-btn
               >
             </v-col>
 
             <v-col >
-              <v-btn color="primary" elevation="2" block outlined
+              <v-btn color="primary" elevation="2" block outlined class="py-2"
                 >Navigate</v-btn
               >
             </v-col>
@@ -47,7 +47,7 @@ export default {
   name: "JoyControl",
   data() {
     return {
-      selectedMode: "",
+      selectedMode: "SLAM Mode",
       modes: ["SLAM Mode", "Navigation Mode"],
     };
   },
@@ -56,11 +56,13 @@ export default {
       zone: document.getElementById("zone_joystick"),
       mode: "static",
       position: { left: "87.5%", top: "89%" },
+      //position: "absolute",
       color: "blue",
       threshold: 0.25,
       fadeTime: 400,
       size: 120,
       maxNumberOfNipples: 1,
+      // shape:"square",
     });
 
     manager.on("start", function (event, nipple) {
