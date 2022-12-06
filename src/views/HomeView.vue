@@ -4,9 +4,7 @@
       <!-- <v-row class="yellow lighten-5" > -->
       <v-layout>
         <v-col cols="9">
-          <!-- <v-row no-gutters class="d-flex justify-start pa-1"> -->
-          <v-card  class="yellow lighten-5 pa-1 ma-1">
-            <!-- <v-layout > -->
+          <!-- <v-card  class="yellow lighten-5 pa-1 ma-1">
             <v-row>
               <v-col cols="4" class="d-flex justify-center">
                 <v-btn block elevation="2" color="red">
@@ -27,9 +25,8 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <!-- </v-layout> -->
-          </v-card>
-          <!-- </v-row> -->
+
+          </v-card> -->
 
           
           <v-card fluid class="yellow lighten-5 pa-1 ma-1 d-flex justify-center">
@@ -41,14 +38,16 @@
             <div id="map3d"></div>
             <!-- </v-row>           -->
           </v-card>
+
+          
           
         </v-col>
 
-        <v-col cols="3">
-          <v-card fluid class="yellow lighten-5 pa-1 "  fill-height height="600px">
+        <v-col cols="3" >
+          <v-card fluid class="yellow lighten-5 pa-1 "  fill-height height="700px">
             
             <v-row no-gutters class="d-flex justify-center">
-              <v-btn text color="red" v-if="connected" @click="disconnect">
+              <v-btn x-large text color="red" v-if="connected" @click="disconnect">
                 <span>Disconnect</span>
                 <v-icon right>mdi-exit-to-app</v-icon>
               </v-btn>
@@ -89,13 +88,24 @@
               </v-btn-toggle>
             </v-row>
 
-            <v-divider color="orange"></v-divider>
+            <v-divider  color="orange"></v-divider>
+
+            <!-- <v-row no-gutters class="d-flex justify-center">
+              <span class="font-weight-light pa-1 purple--text">Map</span>             
+
+            </v-row> -->
 
             <v-row no-gutters class="d-flex justify-center">
-              <span class="font-weight-light pa-1 purple--text">Map</span>
+              <v-col cols="4" class="pa-3 ma-3"> <RMap @mapSave="saveMap" @mapDelete="deleteAMap" :mapNames=mapNames /> </v-col>
+              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
+              <!-- <v-col cols="4"> <RMap /> </v-col>
+              <v-col cols="4"> <RMap /> </v-col> -->
+              
+
             </v-row>
-
-            <v-row no-gutters class="d-flex justify-center">
+            
+            <!-- <v-row no-gutters class="d-flex justify-center">
+              
               <v-btn-toggle v-model="toggle_map" mandatory class="pa-2">
                 <v-btn elevation="2" color="yellow" @click="mapSaveClick">
                   <v-icon>mdi-content-save-settings</v-icon>
@@ -107,15 +117,16 @@
                   <v-icon>mdi-trash-can-outline</v-icon>
                 </v-btn>
               </v-btn-toggle>
-            </v-row>
+            </v-row> -->
 
-            <v-divider color="orange"></v-divider>
+            <!-- <v-divider color="orange"></v-divider> -->
 
-            <v-row no-gutters class="d-flex justify-center">
+            <!-- <v-row no-gutters class="d-flex justify-center">
               <span class="font-weight-light pa-1 purple--text">Way point</span>
-            </v-row>
+              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
+            </v-row> -->
 
-            <v-row no-gutters class="d-flex justify-center">
+            <!-- <v-row no-gutters class="d-flex justify-center">
               <v-btn-toggle v-model="toggle_waypoint" mandatory class="pa-2">
                 <v-btn elevation="2" color="green" @click="waypointAddClick">
                   <v-icon>mdi-plus-box</v-icon>
@@ -124,7 +135,7 @@
                   <v-icon>mdi-trash-can-outline</v-icon>
                 </v-btn>
               </v-btn-toggle>
-            </v-row>
+            </v-row> -->
 
             <v-divider color="orange"></v-divider>
 
@@ -151,6 +162,33 @@
 
             <v-divider color="orange"></v-divider>
 
+            <v-row no-gutters class="pa-2">
+              <v-col cols="12" class="d-flex justify-center">
+                <v-btn block elevation="2" color="red">
+                  <v-icon>mdi-plus-box</v-icon>
+                  Pose estimate
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="pa-2">
+              <v-col cols="12" class="d-flex justify-center">
+                <v-btn block elevation="2" color="green">
+                  <v-icon>mdi-trash-can-outline</v-icon>
+                  Navigate
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-row no-gutters class="pa-2">
+              <v-col cols="12" class="d-flex justify-center">
+                <v-btn block elevation="2" color="blue">
+                  <v-icon>mdi-trash-can-outline</v-icon>
+                  Manual Control
+                </v-btn>
+              </v-col>
+            </v-row>
+
+            <v-divider color="orange"></v-divider>
+
             <v-row no-gutters class="d-flex justify-start pa-2">
               <div id="zone_joystick"></div>
             </v-row>
@@ -165,9 +203,8 @@
 
 <script>
 //import { useWindowSize } from 'vue-window-size';
-import "vue-resize/dist/vue-resize.css";
-import { ResizeObserver } from "vue-resize";
-import nipplesjs from "nipplejs";
+import RMap from "../components/RMap.vue";
+import RWaypoint from "../components/RWaypoint.vue";
 import ROSLIB from "roslib";
 import {
   Viewer,
@@ -181,15 +218,12 @@ import {
   Path,
 } from "ros3d";
 
+import "vue-resize/dist/vue-resize.css";
+import { ResizeObserver } from "vue-resize";
+import nipplesjs from "nipplejs";
+
 export default {
-  name: "Home",
-  // setup() {
-  //   const { width, height } = VueWindowSize();//useWindowSize();
-  //   return {
-  //     windowWidth: width,
-  //     windowHeight: height,
-  //   };
-  // },
+  name: "Home",  
   data() {
     return {
       emrModeSwitch: false,
@@ -198,19 +232,19 @@ export default {
       toggle_mode: undefined,
       toggle_map: undefined,
       toggle_waypoint: undefined,
-      //ws_addr: "ws://192.168.1.41:9090",     // Pi4 at home
-      //ws_addr: "ws://10.222.45.231:9090",
+      //ws_addr: "ws://192.168.1.54:9090",     // Pi4 at home
+      
       //ws_addr: "ws://10.222.41.248:9090",  // Pi4 Ros-Noetic at  work
-      ws_addr: "ws://10.222.41.159:9090",  // Intel NUC & Laptop at work
-      //ws_addr: "ws://192.168.1.52:9090", // Intel NUC & Laptop at home
-      //ws_addr: "ws://192.168.1.49:9090", // Intel NUC & Laptop at home
-      //ws_addr: "ws://10.222.47.101:9090", // Jetson nano
+      
+      ws_addr: "ws://10.222.41.159:9090", // Intel NUC
       colWidth: 0,
       timer: null,
 
-      max_linear: 5.0, // m/s
-      max_angular: 2.0, // rad/s
-      max_distance: 75.0, // pixels;
+      // max_linear: 5.0, // m/s
+      // max_angular: 2.0, // rad/s
+      // max_distance: 75.0, // pixels;
+      linear_speed: 0,
+      angular_speed: 0,
 
       rosIP: "",
       rbServer: null,
@@ -236,6 +270,8 @@ export default {
       navStatus: "",
       isServerConnected: false,
       publishImmediately: true,
+      g_pose: null,
+      
 
       //--- Ros Topic ------
       cmdVelTopic: null,
@@ -245,6 +281,7 @@ export default {
       getMapSrv: null,
       getWayPointsSrv: null,
       getWaypointNameSrv: null,
+      getPoseWaypointNameSrv: null,
       deleteMapSrv: null,
       deleteWaypointSrv: null,
       startNavSrv: null,
@@ -258,6 +295,8 @@ export default {
       offSlamSrvReq: null,
       onMarkerSrvReq: null,
       offMarkerSrvReq: null,
+      saveMapSrv:null,
+
 
       //--- Ros Action Client ------
       actionClient: null,
@@ -270,14 +309,17 @@ export default {
     },
   },
   components: {
-    ResizeObserver,
-  },
+    ResizeObserver, 
+    RMap,
+    RWaypoint,
+  }, 
   mounted() {
     //this.$store.state.modeName = 'Slam Mode';
     //this.$store.dispatch("actionModeName", "Slam Mode");
 
     //--------------  For virtual Joy Stick Start --------------------
-    const manager = nipplesjs.create({
+
+    var option = {
       zone: document.getElementById("zone_joystick"),
       mode: "static",
       position: { left: "50%", top: "86%" },
@@ -287,75 +329,57 @@ export default {
       fadeTime: 400,
       size: 150,
       maxNumberOfNipples: 1,
-      //shape:"square",
-    });
+    };
+
+    const manager = nipplesjs.create(option);
+    //var timer;
+    // var linear_speed=0, angular_speed=0;
 
     manager.on("start", function (event, nipple) {
-      console.log("Movement start");
-      // this.timer = setInterval(function(){
-      //   this.moveAction(linear_speed, angular_speed);
-      // }, 50);
-    });
+      //this.startMoveInterval(0.05, 0);  
+      this.timer= setInterval(this.move, 200); 
+      //this.timer= setInterval(this.move1, 200);
+     
+      //console.log("Move start : ", linear_speed ,angular_speed);  
+    }.bind(this));
 
     manager.on("move", function (event, nipple) {
         
-        // max_linear = 5.0; // m/s
-        // max_angular = 2.0; // rad/s
-        // max_distance = 75.0; // pixels;
-        // linear_speed = Math.sin(nipple.angle.radian) * this.max_linear * nipple.distance/this.max_distance;
-        // angular_speed = -Math.cos(nipple.angle.radian) * this.max_angular * nipple.distance/this.max_distance;
+        var max_linear = 1.0;//5.0; // m/s
+        var max_angular = 1.0;//2.0; // rad/s
+        var max_distance = 75.0; // pixels;
+        this.linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
+        this.angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;               
+
+
+        //console.log("Moving : ", this.linear_speed ,this.angular_speed);     
+        //this.startMoveInterval(linear_speed, angular_speed);    
         
-        
-        // nipplejs returns direction is screen coordiantes
-        // we need to rotate it, that dragging towards screen top will move robot forward
-        var direction = nipple.angle.degree - 90;
-        if (direction > 180) {
-          direction = -(450 - nipple.angle.degree);
-        }
-        // convert angles to radians and scale linear and angular speed
-        // adjust if you want robot to drvie faster or slower
-        var lin = Math.cos(direction / 57.29) * nipple.distance * 0.001;
-        var ang = Math.sin(direction / 57.29) * nipple.distance * 0.01;
-        // nipplejs is triggering events when joystic moves each pixel
-        // we need delay between consecutive messege publications to
-        // prevent system from being flooded by messages
-        // events triggered earlier than 50ms after last publication will be dropped
-        //console.log(lin);
-        console.log("Moving : ", lin ,ang);
-        console.log(nipple.angle.degree);
-        if (this.publishImmediately == true) {
-          this.publishImmediately = false;
-          this.moveAction(lin, ang);
-          setTimeout(
-            function () {
-              this.publishImmediately = true;
-            }.bind(this),
-            50
-          );
-        }
-      }.bind(this)
-    );
+    }.bind(this));
 
     manager.on("end",function () {
-      console.log("Movement end");
-      // if(this.timer){
+      console.log("Move end");
+      this.stopMoveInterval();
+      // if(this.timer)
       //   clearInterval(this.timer);
-      // }      
-      this.moveAction(0, 0);
+
+      
     }.bind(this));
+  
+
+
 
     window.addEventListener("resize", () => {
         this.colWidth = window.innerWidth;
-        console.log("col width: ", this.colWidth)
+        //console.log("col width: ", this.colWidth)
       });
     //--------------- For Virtual Joy Stick End -------------------
 
-    //--------------- For
   },
 
   methods: {
+  
     connect: function () {
-      //this.log = "connect to rosbridge server!!";
       this.rbServer = new ROSLIB.Ros({
         url: this.ws_addr,
       });
@@ -370,23 +394,19 @@ export default {
       });
       this.rbServer.on("close", () => {
         this.connected = false;
-        //this.log = "Connection to websocker server closed";
+        //this.log = "Connection to websocket server closed";
         console.log("Connection to websocket server closed.");
       });
-
-      
 
       this.viewer3d = new Viewer({
         divID: "map3d",
         width: 640,
         height: 480,
         //width: (this.colWidth / 12) * 8,
-        //height:(480),
-
-        
+        //height:(480),        
         antialias: true,
       });      
-      window.innerWidth
+      //window.innerWidth
       this.viewer3d.resize( window.innerWidth*3/4, window.innerHeight*0.8
         // document.getElementById("map3d").offsetWidth * 0.96,
         // ((document.getElementById("map3d").offsetWidth * 3) / 4) * 0.96
@@ -401,6 +421,15 @@ export default {
         serverName: "tf2_web_republisher",
       });
 
+      var tfClientM = new ROSLIB.TFClient({
+        ros: this.rbServer,
+        angularThres: 0.01,
+        transThres: 0.01,
+        rate: 10.0,
+        fixedFrame: "/map",
+        //fixedFrame: "base_footprint",
+      });
+
       new LaserScan({
         ros: this.rbServer,
         topic: "scan",
@@ -412,12 +441,12 @@ export default {
         },
       });
 
-      // new Pose({
-      //   ros: this.rbServer,
-      //   tfClient: tfClient,
-      //   rootObject: this.viewer3d.scene,
-      //   topic: "robot_pose",
-      // });
+      new Pose({
+        ros: this.rbServer,
+        tfClient: tfClient,
+        rootObject: this.viewer3d.scene,
+        topic: "robot_pose",
+      });
 
       // new UrdfClient({
       //   ros: this.rbServer,
@@ -425,20 +454,13 @@ export default {
       //   rootObject: this.viewer3d.scene,
       // });
 
-      // new OccupancyGridClient({
-      //   ros: this.ros,
-      //   continuous: true,
-      //   rootObject: this.viewer.selectableObjects,
-      // });
-
-      var tfClientM = new ROSLIB.TFClient({
+      new OccupancyGridClient({
         ros: this.rbServer,
-        angularThres: 0.01,
-        transThres: 0.01,
-        rate: 10.0,
-        fixedFrame: "map",
-        //fixedFrame: "base_footprint",
+        continuous: true,
+        rootObject: this.viewer3d.scene,
       });
+
+      
 
       new InteractiveMarkerClient({
         ros: this.rbServer,
@@ -457,18 +479,19 @@ export default {
         lifetime: 10,
       });
 
-      // new MarkerArrayClient({
-      //   ros: this.rbServer,
-      //   tfClient: tfClientM,
-      //   topic: "/visualization_marker_array",
-      //   rootObject: this.viewer.selectableObjects,
-      // });
-      // new MarkerArrayClient({
-      //   ros: this.rbServer,
-      //   tfClient: tfClientM,
-      //   topic: "/visualization_marker_array_text",
-      //   rootObject: this.viewer.selectableObjects,
-      // });
+      new MarkerArrayClient({
+        ros: this.rbServer,
+        tfClient: tfClientM,
+        topic: "/visualization_marker_array",
+        rootObject: this.viewer3d.selectableObjects,
+      });
+
+      new MarkerArrayClient({
+        ros: this.rbServer,
+        tfClient: tfClientM,
+        topic: "/visualization_marker_array_text",
+        rootObject: this.viewer3d.selectableObjects,
+      });
 
       //----- Ros Topic -----------
       this.cmdVelTopic = new ROSLIB.Topic({
@@ -476,32 +499,196 @@ export default {
         name: "/cmd_vel",
         messageType: "geometry_msgs/Twist",
       });
+      this.cmdVelTopic.advertise();
 
-      //this.cmdVelTopic.advertise();
+      this.goalCancelTopic = new ROSLIB.Topic({
+        ros: this.rbServer,
+        name: "/move_base/cancel",
+        messageType: "actionlib_msgs/GoalID",
+      });
+      this.goalCancelTopic.advertise();
+
+      var pathDisplay = new Path({
+        ros: this.rbServer,
+        tfClient: tfClient,
+        rootObject: this.viewer3d.scene,
+        topic: "/move_base_flex/GlobalPlanner/plan"
+      });
+      this.viewer3d.addObject(pathDisplay)
+/*
+      var move_base_status_listener = new ROSLIB.Topic({
+        ros: this.rbServer,
+        name: move_base_status,
+        messageType: "actionlib_msgs/GoalStatusArray",
+      });
+
+      move_base_status_listener.subscribe(
+        function(message){
+          if(message.status_list.lenght == 1)
+          {
+            //console.log(message.status_list[0].status)
+            //console.log(message.status_list[0].goal_id)
+            this.goalID = message.status_list[0].goal_id;
+            //console.log(nav_statusElement)
+            if (message.status_list[0].status == 3) {
+              this.navStatus = "Goal react";
+            } else if (message.status_list[0].status == 1) {
+              this.navStatus = "Driving";
+            }
+          }
+        }.bind(this)
+      );
+*/
+
+
 
       //----- Ros Service ---------
+      this.getMapSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_map",
+        serviceType: "agv_interface/maps",
+      });
+
+      this.getWayPointsSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_waypoint",
+        serviceType: "agv_interface/waypointsarray",
+      });
+
+      this.getWaypointNameSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_waypoint_name",
+        serviceType: "agv_interface/waypointname",
+      });
+
+      this.getPoseWaypointNameSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_a_waypoint",
+        serviceType: "agv_interface/awaypoint",
+      });
+
+      this.deleteMapSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/delete_map",
+        serviceType: "agv_interface/deletemap",
+      });
+
+      this.deleteWaypointSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/delete_waypoint",
+        serviceType: "agv_interface/deletewaypoint",
+      });
+
+      this.startNavSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/start_navigation",
+        serviceType: "agv_interface/navigatesrv",
+      });
+
+      this.startSLAMSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/start_slam",
+        serviceType: "agv_interface/slamsrv",
+      });
+
+      this.showPoseMarkerSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/poseestimate_markers_service",
+        serviceType: "agv_interface/poseestimate",
+      });
+
+      this.showNavMarkerSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/waypoint_markers_service",
+        serviceType: "agv_interface/navigatesrv",
+      });
+
+      this.setPoseSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/set_pose",
+        serviceType: "agv_interface/poseesstimate",
+      });
+      
+      this.setPoseSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/set_pose",
+        serviceType: "agv_interface/poseesstimate",
+      });
+      
+      this.getPoseSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_pose",
+        serviceType: "agv_interface/getpose",
+      });
+      
+      this.saveMapSrv= new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/save_map",
+        serviceType: "agv_interface/savemaps",
+      });
+      
+      // this.calIMUSrv= new ROSLIB.Service({
+      //   ros: this.rbServer,
+      //   name: "/imu_cal",
+      //   serviceType: "std_srvs/Empty",
+      // });
+
+      this.onSlamSrvReq = new ROSLIB.ServiceRequest({
+        onezero: 1,
+        map_file:"map_office",        
+      });
+
+      console.log(this.onSlamSrvReq);
+
+      this.offSlamSrvReq = new ROSLIB.ServiceRequest({
+        onezero: 0,
+        map_file:"map_office",        
+      });
+      console.log(this.onSlamSrvReq);
+
+      this.onMarkerSrvReq = new ROSLIB.ServiceRequest({
+        onezero: 1,               
+      });
+
+      this.offMarkerSrvReq = new ROSLIB.ServiceRequest({
+        onezero: 0,               
+      });
+
+      
+      this.loadMap();
     },
     disconnect: function () {
       this.rbServer.close();
       delete this.viewer3d;
       location.reload();
     },
-    moveAction: function(linear, angular) {
-      console.log("Move action");
+    move: function(){
       var twist = new ROSLIB.Message({
-        linear: { x: 0, y: 0, z: 0 },
-        angular: { x: 0, y: 0, z: 0 },
+        linear: { x: this.linear_speed, y: 0, z: 0 },
+        angular: { x: 0, y: 0, z: this.angular_speed },
       });
-
-      if (linear !== undefined && angular !== undefined) {
-        twist.linear.x = linear;
-        twist.angular.z = angular;
-      } else {
-        twist.linear.x = 0;
-        twist.angular.z = 0;
-      }
+      console.log("speed:", twist.linear.x, twist.angular.z);
       this.cmdVelTopic.publish(twist);
     },
+    move1: function (){
+      var twist = new ROSLIB.Message({
+        linear: { x: 0.02, y: 0, z: 0 },
+        angular: { x: 0, y: 0, z: 0 },
+      });
+      this.cmdVelTopic.publish(twist);
+    },
+    startMoveInterval: function(lin, ang){
+      if(this.timer)
+        clearInterval(this.timer);
+      this.timer= setInterval(this.move(lin, ang), 200);
+    },
+    stopMoveInterval: function(){
+      if(this.timer)
+        clearInterval(this.timer);
+      this.move(0, 0)
+    },
+
+
     handleResize({ width, height }) {
       console.log("resized", width, height);
       console.log(document.getElementById("map3d").offsetWidth);
@@ -515,76 +702,369 @@ export default {
       //   (document.getElementById("map3d").offsetWidth * 0.96 * 3) / 4
       // );
     },
+    calIMU(){
+      var param = new ROSLIB.ServiceRequest({});
+      this.calIMUSrv.callService(param, function(result){
+        console.log(result);
+      });
+    },
+    saveMap(item){
+      console.log(item)
+      this.newMapName = item.name;
+      var mapName_ = new ROSLIB.ServiceRequest({
+        mapfile: this.newMapName,
+      });
 
-    // setTopic: function () {
-    //   this.topic = new ROSLIB.Topic({
-    //     ros: this.ros,
-    //     name: "/cmd_vel",
-    //     messageType: "geometry_msgs/Twist",
-    //   });
-    // },
-    // forward: function () {
-    //   this.message = new ROSLIB.Message({
-    //     linear: { x: 0.2, y: 0, z: 0 },
-    //     angular: { x: 0, y: 0, z: 0 },
-    //   });
-    //   this.setTopic();
-    //   this.topic.publish(this.message);
-    // },
-    // stop: function () {
-    //   this.message = new ROSLIB.Message({
-    //     linear: { x: 0, y: 0, z: 0 },
-    //     angular: { x: 0, y: 0, z: 0 },
-    //   });
-    //   this.setTopic();
-    //   this.topic.publish(this.message);
-    // },
-    // backward: function () {
-    //   this.message = new ROSLIB.Message({
-    //     linear: { x: -0.2, y: 0, z: 0 },
-    //     angular: { x: 0, y: 0, z: 0 },
-    //   });
-    //   this.setTopic();
-    //   this.topic.publish(this.message);
-    // },
-    // turnLeft: function () {
-    //   this.message = new ROSLIB.Message({
-    //     linear: { x: 0.2, y: 0, z: 0 },
-    //     angular: { x: 0, y: 0, z: 0.2 },
-    //   });
-    //   this.setTopic();
-    //   this.topic.publish(this.message);
-    // },
-    // turnRight: function () {
-    //   this.message = new ROSLIB.Message({
-    //     linear: { x: 0.2, y: 0, z: 0 },
-    //     angular: { x: 0, y: 0, z: -0.2 },
-    //   });
-    //   this.setTopic();
-    //   this.topic.publish(this.message);
-    // },
+      console.log(this.newMapName);
+      console.log(mapName_);
+      this.saveMapSrv.callService(mapName_, function(result){
+        console.log(result);
+      }); 
+    },
+    setPose(){
+      this.setPoseSrv.callService(this.onMarkerSrvReq, function(result){
+        console.log(result);
+      });
+    },  
+    setWaypoint() {
+      console.log("set waypoint");
+      console.log(this.selectedMap);
+      console.log(this.seqWayPoint);
+      var poseReq = new ROSLIB.ServiceRequest({
+        name: this.newWaypointName,
+        seq: this.seqWayPoint,
+        mapname: this.selectedMap,
+      });
+      console.log(poseReq);
+      this.getPoseSrv.callService(
+        poseReq,
+        function (result) {
+          console.log(result);
+          var getwaypointparam = new ROSLIB.ServiceRequest({
+            mapname: this.selectedMap,
+          });
+          this.getWaypointNameSrv.callService(
+            getwaypointparam,
+            function (result) {
+              console.log(result);
+              var dataSet = [];
+              while (this.wayPoints.length > 0) {
+                this.wayPoints.pop();
+              }
+              //g_waypoints.push(['none', 'NONE'])
+              if (result.length == 0) {
+                this.isWaypointAvaliable = false;
+              } else {
+                this.isWaypointAvaliable = true;
+              }
+              result.waypointname.forEach((fn) => {
+                var item = {
+                  name: fn,
+                };
+                dataSet.push(item);
+                this.wayPoints.push(item);
+                console.log(fn);
+              });
+              console.log(dataSet);
+            }.bind(this)
+          );
+          var getwaypointparam2 = new ROSLIB.ServiceRequest({
+            name: this.selectedMap,
+          });
+          this.getWayPoints.callService(getwaypointparam2, function (result) {
+            console.log(result);
+          });
+        }.bind(this)
+      );
+    },
+    goToWaypoint() {
+      // create a goal
+      console.log("send goal");
+      //console.log(pose)
+      console.log(this.g_pose);
+      var goal = new ROSLIB.Goal({
+        actionClient: this.actionClient,
+        goalMessage: {
+          target_pose: {
+            header: {
+              frame_id: "map",
+            },
+            pose: this.g_pose.pose,
+          },
+        },
+      });
+      goal.send();
+      goal.on("feedback", function (feedback) {
+        console.log("Feedback: " + feedback);
+      });
+      goal.on("result", function (result) {
+        console.log("Final Result: " + result);
+      });
+    },
+    updateSLAM() {
+      if (this.isSLAM == true) {
+        this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
+          console.log(result);
+        });
+        //this.$store.commit("setIsSlamRunning", true);
+      } else {
+        this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
+          console.log(result);
+        });
+        //this.$store.commit("setIsSlamRunning", false);
+      }
+    },
+    updatePose() {
+      if (this.isPose == true) {
+        this.showPoseMarkerSrv.callService(this.onMarker, function (result) {
+          console.log(result);
+        });
+      } else {
+        this.showPoseMarkerSrv.callService(this.offMarker, function (result) {
+          console.log(result);
+        });
+      }
+      console.log(this.isPose);
+    },
+    updateWaypoint() {
+      if (this.isWaypoint == true) {
+        this.showNavMarkerSrv.callService(this.onMarker, function (result) {
+          console.log(result);
+        });
+      } else {
+        this.showNavMarkerSrv.callService(this.offMarker, function (result) {
+          console.log(result);
+        });
+      }
+      console.log(this.isWaypoint);
+    },
+    updateNav() {
+      var check_nav = this.isNav;
+      console.log(this.isNav);
+      if (check_nav == true) {
+        if (this.selectedMap == "") {
+          this.$alert("Choose a map first");
+          this.isNav = this.FALSE;
+          console.log("After dialog");
+          console.log(this.isNav);
+        } else {
+          var onNav_ = new ROSLIB.ServiceRequest({
+            onezero: 1,
+            map_file: this.selectedMap,
+          });
+          console.log(onNav_);
+          this.startNavSrv.callService(onNav_, function (result) {
+            console.log(result);
+          });
+          this.$store.commit("setIsNavRunning", true);
+        }
+      } else {
+        if (this.selectedMap == "") {
+          console.log("NO map name");
+        } else {
+          var offNav_ = new ROSLIB.ServiceRequest({
+            onezero: 0,
+            map_file: this.selectedMap,
+          });
+          console.log(offNav_);
+          this.startNavSrv.callService(offNav_, function (result) {
+            console.log(result);
+          });
+          this.$store.commit("setIsNavRunning", false);
+        }
+      }
+      console.log(check_nav);
+    },
+    loadMap() {
+      this.getMapSrv.callService(
+        this.onMarker,
+        function (result) {
+          console.log("Done");
+          console.log(result);
+          while (this.mapNames.length > 0) {
+            this.mapNames.pop();
+          }
+          result.map_file.forEach((fn) => {
+            var item = {
+              name: fn,
+            };
+            this.mapNames.push(item);
+            console.log(fn);
+          });
+
+          console.log(this.mapNames);
+          
+        }.bind(this)
+      );
+    },
+    deleteAMap(item) {
+      console.log("Delete map");
+      console.log(item)
+      this.selectedMap = item.name
+
+      var delMapParam = new ROSLIB.ServiceRequest({
+        mapfile: this.selectedMap,
+      });
+      this.deleteMapSrv.callService(
+        delMapParam,
+        function (result) {
+          console.log(result);
+          this.loadMap();
+        }.bind(this)
+      );
+    },
+    deleteAWaypoint() {
+      console.log("Delete waypoint");
+      var delWaypointParam = new ROSLIB.ServiceRequest({
+        mapfile: this.selectedMap,
+        waypoint: this.selectedWayPoint,
+      });
+      this.deleteWaypoint.callService(
+        delWaypointParam,
+        function (result) {
+          var getwaypointparam = new ROSLIB.ServiceRequest({
+            mapname: this.selectedMap,
+          });
+          console.log(result);
+          this.getWaypointName.callService(
+            getwaypointparam,
+            function (result) {
+              console.log(result);
+              var dataSet = [];
+              while (this.wayPoints.length > 0) {
+                this.wayPoints.pop();
+              }
+              //g_waypoints.push(['none', 'NONE'])
+              if (result.length == 0) {
+                this.isWaypointAvaliable = false;
+              } else {
+                this.isWaypointAvaliable = true;
+              }
+              result.waypointname.forEach((fn) => {
+                var item = {
+                  name: fn,
+                };
+                dataSet.push(item);
+                this.wayPoints.push(item);
+                console.log(fn);
+              });
+              console.log(dataSet);
+              //Update table
+            }.bind(this)
+          );
+          var getwaypointparam2 = new ROSLIB.ServiceRequest({
+            name: this.selectedMap,
+          });
+          this.getWayPointsSrv.callService(getwaypointparam2, function (result) {
+            console.log(result);
+          });
+        }.bind(this)
+      );
+    },
+    onRowMapSelected(items) {
+      if (items.length > 0) {
+        this.selectedMap = items[0].name;
+        this.$store.commit("setSelectedMapName", this.selectedMap);
+        console.log(this.selectedMap);
+        var getwaypointparam = new ROSLIB.ServiceRequest({
+          mapname: this.selectedMap,
+        });
+        this.getWaypointName.callService(
+          getwaypointparam,
+          function (result) {
+            //console.log(result);
+            while (this.wayPoints.length > 0) {
+              this.wayPoints.pop();
+            }
+            //g_waypoints.push(['none', 'NONE'])
+            if (result.length == 0) {
+              this.isWaypointAvaliable = false;
+            } else {
+              this.isWaypointAvaliable = true;
+            }
+            result.waypointname.forEach((fn) => {
+              var item = {
+                name: fn,
+              };
+              this.wayPoints.push(item);
+            });
+          }.bind(this)
+        );
+        console.log("Call getwaypoins");
+        var getwaypointparam2 = new ROSLIB.ServiceRequest({
+          name: this.selectedMap,
+        });
+        console.log(getwaypointparam2);
+        this.getWayPointsSrv.callService(getwaypointparam2, function (result) {
+          console.log("Get resulte");
+          console.log(result);
+        });
+      }
+    },
+    onRowWayPointSelected(items) {
+      if (items.length > 0) {
+        this.selectedWayPoint = items[0].name;
+        this.$store.commit("setSelectedWayPoint", this.selectedWayPoint);
+        var getwaypointparam = new ROSLIB.ServiceRequest({
+          name: this.selectedWayPoint,
+          mapname: this.selectedMap,
+        });
+        this.getPoseWaypointNameSrv.callService(
+          getwaypointparam,
+          function (result) {
+            this.g_pose = result;
+            console.log(result);
+          }.bind(this)
+        );
+        console.log(this.selectedWayPoint);
+      }
+    },
 
     slamClick() {
       this.emrModeName = "SLAM";
+      this.isSLAM = true;
+      this.isNav = false;
+
+      if (this.isSLAM == true) {
+        this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
+          console.log(result);
+        });
+        //this.$store.commit("setIsSlamRunning", true);
+      } 
+
     },
     navClick() {
       this.emrModeName = "Navigation";
+      this.isSLAM = false;
+      this.isNav = true;
+      if (this.isSlam == false){
+        this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
+          console.log(result);
+        });
+      }
+
+     
     },
-    mapSaveClick() {
-      console.log("Save map");
-    },
-    mapLoadClick() {
-      console.log("Load map");
-    },
-    mapDeleteClick() {
-      console.log("Delete map");
-    },
-    waypointAddClick() {
-      console.log("Add waypoint");
-    },
-    waypointDeleteClick() {
-      console.log("Delete waypoint");
+    // mapSaveClick() {
+    //   console.log("Save map");
+    // },
+    // mapLoadClick() {
+    //   console.log("Load map");
+    // },
+    // mapDeleteClick() {
+    //   console.log("Delete map");
+    // },
+    // waypointAddClick() {
+    //   console.log("Add waypoint");
+    // },
+    // waypointDeleteClick() {
+    //   console.log("Delete waypoint");
+    // },
+    MapSave(){
+
     },
   },
+
+  
 };
 </script>
