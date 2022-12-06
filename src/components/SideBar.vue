@@ -309,12 +309,8 @@ export default {
           value: "name",
         },    
         { text: "Pos:X", value: "posx", sortable: false },
-        { text: "Pos:Y", value: "posy", sortable: false },
-        { text: "Pos:Z", value: "posz", sortable: false },   
-        { text: "Ori:X", value: "orix", sortable: false },
-        { text: "Ori:Y", value: "oriy", sortable: false },
-        { text: "Ori:Z", value: "oriz", sortable: false },
-        { text: "Ori:W", value: "oriw", sortable: false }, 
+        { text: "Pos:Y", value: "posy", sortable: false },        
+        { text: "Ori:Z", value: "oriz", sortable: false },        
         { text: "Actions", value: "actions", sortable: false },
         
       ],
@@ -331,12 +327,8 @@ export default {
         id: null,
         name: "",
         posx: null,
-        posy: null,
-        posz: null,
-        orix: null,
-        oriy: null,
+        posy: null,        
         oriz: null,
-        oriw: 0.003,
 
       },
       defaultMap: {

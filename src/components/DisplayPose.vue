@@ -15,12 +15,7 @@
             <div class="purple--text pa-1">
               Y:
               <span class="purple--text grey lighten-2 pa-1">0.002</span>
-            </div>
-
-            <div class="purple--text pa-1">
-              Z:
-              <span class="purple--text grey lighten-2 pa-1">0.003</span>
-            </div>
+            </div>            
           </v-row>
         </v-col>
 
@@ -28,24 +23,9 @@
           <v-row class="d-flex justify-center">
             <div class="blue--text pa-1">Orientation:</div>
           </v-row>
-          <v-row class="d-flex justify-center">
-            <div class="blue--text pa-1">
-              X:
-              <span class="blue--text grey lighten-2 pa-1">0.001</span>
-            </div>
-
-            <div class="blue--text pa-1">
-              Y:
-              <span class="blue--text grey lighten-2 pa-1">0.001</span>
-            </div>
-
+          <v-row class="d-flex justify-center"> 
             <div class="blue--text pa-1">
               Z:
-              <span class="blue--text grey lighten-2 pa-1">0.001</span>
-            </div>
-
-            <div class="blue--text pa-1">
-              W:
               <span class="blue--text grey lighten-2 pa-1">0.001</span>
             </div>
           </v-row>

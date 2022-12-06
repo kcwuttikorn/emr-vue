@@ -1,11 +1,11 @@
 <template>
   <div class="program">
-    <v-container fluid class="blue pa-2">
+    <v-container fluid class="blue">
       <!-- <h1>Blockly view</h1> -->
       <!-- <div class="row"> -->
       <v-row no-gutters>
         <v-col cols="12">          
-          <v-card fluid class="yellow lighten-5 pa-2">
+          <v-card fluid class="yellow lighten-5 pa-1">
             <v-btn 
               color="primary" 
               elevation="2"
@@ -15,16 +15,6 @@
             >
             Run
             </v-btn>
-            
-            <!-- <button
-              type="button"
-              class="btn btn-info btn-lg"
-              value="run"
-              onclick="runBlockly(this)"
-              id="run_blockly"
-            >
-              RUN
-            </button> -->
 
             <v-btn 
               color="success" 
@@ -36,16 +26,6 @@
             >
             Save
             </v-btn>
-
-            <!-- <button
-              type="button"
-              class="btn btn-info btn-lg"
-              data-toggle="modal"
-              data-target="#saveBlockyModal"
-              id="save_blockly"
-            >
-              Save
-            </button> -->
 
             <v-btn 
               color="warning" 
@@ -59,16 +39,6 @@
             Load
             </v-btn>
 
-            <!-- <button
-              type="button"
-              class="btn btn-info btn-lg"
-              data-toggle="modal"
-              data-target="#loadBlockyModal"
-              onclick="getFile()"
-              id="load_blockly"
-            >
-              Load
-            </button> -->
           </v-card>
         </v-col>
       </v-row>
@@ -79,7 +49,7 @@
             fluid             
             class="cyan lighten-5 pa-2 ma-2"
             id="blocklyArea"
-            height="80vh"
+            height="75vh"
           >
               <div
                 id="blocklyDiv"
