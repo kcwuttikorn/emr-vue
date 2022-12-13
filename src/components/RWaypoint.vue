@@ -28,7 +28,8 @@
                 show-select
                 class="elevation-1"
                 fixed-header
-                height="200"
+                height="250"
+                
               >
                 <template v-slot:top>
                   <v-switch
@@ -40,7 +41,7 @@
               </v-data-table>
             </v-row>
 
-            <v-row class="d-flex justify-start pa-2 ma-3">
+            <v-row no-gutters class="d-flex justify-start pa-2 ma-2">
               <p>{{ selected }}</p>
             </v-row>
             

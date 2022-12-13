@@ -75,7 +75,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>          
-          <v-btn color="green darken-1" outlined @click="dialog = false">
+          <v-btn color="green darken-1" outlined @click="useMap">
             <v-icon>mdi-file-download</v-icon>
             <span>Use</span>
           </v-btn>
@@ -167,6 +167,21 @@ export default {
         
         this.dialog = false;
       }
+    },
+    useMap()
+    {
+      if(this.selected.length !== 0)
+      {
+        console.log(this.selected[0].name)
+        this.$emit("mapUse", this.selected[0])
+        //var index = this.names.indexOf(this.selected[0])
+        //console.log(index)
+        //this.names.splice(index,1)
+        //this.selected.pop()
+        
+        this.dialog = false;
+      }
+
     }
 
     

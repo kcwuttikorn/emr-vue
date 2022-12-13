@@ -1,63 +1,218 @@
 <template>
   <div class="home">
-    <v-container fluid ma-0 pa-0 fill-height  class="blue">
+    <v-container fluid ma-0 pa-0 fill-height class="blue">
       <!-- <v-row class="yellow lighten-5" > -->
       <v-layout>
-        <v-col cols="9">
-          <!-- <v-card  class="yellow lighten-5 pa-1 ma-1">
-            <v-row>
-              <v-col cols="4" class="d-flex justify-center">
-                <v-btn block elevation="2" color="red">
-                  <v-icon>mdi-plus-box</v-icon>
-                  Pose estimate
-                </v-btn>
-              </v-col>
-              <v-col cols="4" class="d-flex justify-center">
-                <v-btn block elevation="2" color="green">
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                  Navigate
-                </v-btn>
-              </v-col>
-              <v-col cols="4" class="d-flex justify-center">
-                <v-btn block elevation="2" color="blue">
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                  Manual Control
-                </v-btn>
-              </v-col>
-            </v-row>
-
-          </v-card> -->
-
-          
-          <v-card fluid class="yellow lighten-5 pa-1 ma-1 d-flex justify-center">
+        <v-col cols="7">
+          <v-card fluid class="yellow lighten-5 pa-1 d-flex justify-center">
             <!-- <v-row no-gutters class="d-flex justify-center pa-1"> -->
             <!-- <div>
               <p>window width: {{ windowWidth }}</p>
               <p>window height: {{ windowHeight }}</p>
             </div> -->
+
             <div id="map3d"></div>
+
             <!-- </v-row>           -->
           </v-card>
 
-          
-          
+          <v-card class="yellow lighten-5 pa-1 my-1 d-flex justify-center">
+            <v-row>
+              <v-col cols="2" class="d-flex justify-center">
+                <div class="purple--text pa-1">Position:</div>
+              </v-col>
+
+              <v-col cols="4">
+                <div class="purple--text pa-1">
+                  X:
+                  <span class="purple--text grey lighten-2 pa-1">0.001</span>
+                  Y:
+                  <span class="purple--text grey lighten-2 pa-1">0.002</span>
+                </div>
+              </v-col>
+
+              <v-col cols="2" class="d-flex justify-center">
+                <div class="blue--text pa-1">Orientation:</div>
+              </v-col>
+
+              <v-col cols="4">
+                <div class="blue--text pa-1">
+                  Z:
+                  <span class="blue--text grey lighten-2 pa-1">0.001</span>
+                </div>
+              </v-col>
+            </v-row>
+          </v-card>
         </v-col>
 
-        <v-col cols="3" >
-          <v-card fluid class="yellow lighten-5 pa-1 "  fill-height height="700px">
-            
+        <v-col cols="3">
+          <v-card
+            fluid
+            fill-height
+            height="680px"
+            class="yellow lighten-5 pa-1"
+          >
+            <!-- <v-divider color="orange"></v-divider> -->
+
+            <v-row no-gutters class="d-flex justify-start">
+              <span class="font-weight-light pa-1 purple--text">
+                Use Map : {{ this.selectedMap }}</span
+              >
+            </v-row>
+
+            <v-divider color="orange"></v-divider>
+
+            <v-tabs
+              v-model="tab"
+              fixed-tabs
+              background-color="light-blue"
+              center-active
+              dark
+              outlined
+            >
+              <v-tabs-slider color="yellow"></v-tabs-slider>
+              <v-tab>Map</v-tab>
+              <v-tab>Way Point</v-tab>
+            </v-tabs>
+            <v-tabs-items v-model="tab">
+              <v-tab-item>
+                <!-- <v-card-text class="text-subtitle-1 font-weight-bold"
+                  >Map:</v-card-text
+                > -->
+                <v-card>
+                  <!-- <v-card-title>
+                    <span class="text-h6">Map Name:</span>
+                  </v-card-title> -->
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-data-table
+                          v-model="selected"
+                          :headers="headers"
+                          :items="mapNames"
+                          :single-select="singleSelect"
+                          item-key="name"
+                          show-select
+                          class="elevation-1"
+                          fixed-header
+                          height="150"
+                        >
+                          <template v-slot:top>
+                            <v-switch
+                              
+                              v-model="singleSelect"
+                              label="Single select"
+                              class="pa-3"
+                            ></v-switch>
+                          </template>
+                        </v-data-table>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-form ref="form" v-model="valid" lazy-validation>
+                            <v-text-field
+                              v-model="newMapName"
+                              label="New map name"
+                              ref="inputRef"
+                              required
+                            >
+                            </v-text-field>
+                          </v-form>
+                        </v-col>
+
+                        <!-- <v-col cols="4">                          
+                          <v-card-actions>
+                            <v-btn
+                              color="blue darken-1"
+                              outlined
+                              @click="saveMap"
+                              small
+                            >
+                              <v-icon>mdi-content-save-settings</v-icon>
+                              <span>Save</span>
+                            </v-btn>
+                          </v-card-actions>
+                        </v-col> -->
+                      </v-row>
+                    </v-container>
+                    <!-- <small>*indicates required field</small> -->
+                  </v-card-text>
+
+                  <v-card-actions>
+
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" outlined @click="saveMap" small>
+                      <v-icon>mdi-content-save-settings</v-icon>
+                      <span>Save</span>
+                    </v-btn>
+                    <v-btn color="green darken-1" outlined @click="useMap" small>
+                      <v-icon>mdi-file-download</v-icon>
+                      <span>Use</span>
+                    </v-btn>
+                    <v-btn color="red darken-1" outlined @click="deleteMap" small>
+                      <v-icon>mdi-trash-can-outline</v-icon>
+                      <span>Delete</span>
+                    </v-btn>
+                    <!-- <v-btn
+                      color="black darken-1"
+                      outlined
+                      @click="dialog = false"
+                      small
+                    >
+                      <v-icon right>mdi-exit-to-app</v-icon>
+                      <span>Close</span>
+                    </v-btn> -->
+                  </v-card-actions>
+                </v-card>
+              </v-tab-item>
+
+              <v-tab-item>
+                <v-card-text class="text-subtitle-1 font-weight-bold"
+                  >Waypoint:</v-card-text
+                >
+              </v-tab-item>
+            </v-tabs-items>
+
+            <v-divider color="orange"></v-divider>
+
             <v-row no-gutters class="d-flex justify-center">
-              <v-btn x-large text color="red" v-if="connected" @click="disconnect">
+              <v-col cols="4" class="pa-3 ma-3">
+                <RMap
+                  @mapSave="saveMap"
+                  @mapDelete="deleteAMap"
+                  @mapUse="useMap"
+                  :mapNames="mapNames"
+                />
+              </v-col>
+              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
+            </v-row>
+          </v-card>
+        </v-col>
+
+        <v-col cols="2">
+          <v-card
+            fluid
+            class="yellow lighten-5 pa-1"
+            fill-height
+            height="680px"
+          >
+            <v-row no-gutters class="d-flex justify-center">
+              <v-btn
+                x-large
+                text
+                color="red"
+                v-if="connected"
+                @click="disconnect"
+              >
                 <span>Disconnect</span>
                 <v-icon right>mdi-exit-to-app</v-icon>
               </v-btn>
 
-              <v-btn text color="green" v-else @click="connect">
+              <v-btn x-large text color="green" v-else @click="connect">
                 <span>Connect</span>
                 <v-icon right>mdi-exit-to-app</v-icon>
               </v-btn>
             </v-row>
-            
 
             <v-divider color="orange"></v-divider>
 
@@ -67,104 +222,28 @@
               >
             </v-row>
 
-            <v-row no-gutters class="d-flex justify-center">
+            <v-row
+              no-gutters
+              align="center"
+              justify="center"
+              class="d-flex justify-center"
+            >
               <v-btn-toggle v-model="toggle_mode" mandatory class="pa-2">
-                <v-btn
-                  width="120"
-                  large
-                  elevation="2"
-                  color="primary"
-                  @click="slamClick"
+                <v-btn large elevation="2" color="primary" @click="slamClick"
                   >SLAM
                 </v-btn>
-                <v-btn
-                  width="120"
-                  large
-                  elevation="2"
-                  color="success"
-                  @click="navClick"
+                <v-btn large elevation="2" color="success" @click="navClick"
                   >Navigation
                 </v-btn>
               </v-btn-toggle>
-            </v-row>
-
-            <v-divider  color="orange"></v-divider>
-
-            <!-- <v-row no-gutters class="d-flex justify-center">
-              <span class="font-weight-light pa-1 purple--text">Map</span>             
-
-            </v-row> -->
-
-            <v-row no-gutters class="d-flex justify-center">
-              <v-col cols="4" class="pa-3 ma-3"> <RMap @mapSave="saveMap" @mapDelete="deleteAMap" :mapNames=mapNames /> </v-col>
-              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
-              <!-- <v-col cols="4"> <RMap /> </v-col>
-              <v-col cols="4"> <RMap /> </v-col> -->
-              
-
-            </v-row>
-            
-            <!-- <v-row no-gutters class="d-flex justify-center">
-              
-              <v-btn-toggle v-model="toggle_map" mandatory class="pa-2">
-                <v-btn elevation="2" color="yellow" @click="mapSaveClick">
-                  <v-icon>mdi-content-save-settings</v-icon>
-                </v-btn>
-                <v-btn elevation="2" color="green" @click="mapLoadClick">
-                  <v-icon>mdi-file-download</v-icon>
-                </v-btn>
-                <v-btn elevation="2" color="red" @click="mapDeleteClick">
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-            </v-row> -->
-
-            <!-- <v-divider color="orange"></v-divider> -->
-
-            <!-- <v-row no-gutters class="d-flex justify-center">
-              <span class="font-weight-light pa-1 purple--text">Way point</span>
-              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
-            </v-row> -->
-
-            <!-- <v-row no-gutters class="d-flex justify-center">
-              <v-btn-toggle v-model="toggle_waypoint" mandatory class="pa-2">
-                <v-btn elevation="2" color="green" @click="waypointAddClick">
-                  <v-icon>mdi-plus-box</v-icon>
-                </v-btn>
-                <v-btn elevation="2" color="red" @click="waypointDeleteClick">
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-            </v-row> -->
-
-            <v-divider color="orange"></v-divider>
-
-            <v-row no-gutters class="d-flex justify-start pa-2">
-              <div class="purple--text pa-1">Position:</div>
-              <div class="purple--text pa-1">
-                X:
-                <span class="purple--text grey lighten-2 pa-1">0.001</span>
-              </div>
-
-              <div class="purple--text pa-1">
-                Y:
-                <span class="purple--text grey lighten-2 pa-1">0.002</span>
-              </div>
-            </v-row>
-
-            <v-row no-gutters class="d-flex justify-start pa-2">
-              <div class="blue--text pa-1">Orientation:</div>
-              <div class="blue--text pa-1">
-                Z:
-                <span class="blue--text grey lighten-2 pa-1">0.001</span>
-              </div>
+              <p>{{ toggle_mode }}</p>
             </v-row>
 
             <v-divider color="orange"></v-divider>
 
             <v-row no-gutters class="pa-2">
               <v-col cols="12" class="d-flex justify-center">
-                <v-btn block elevation="2" color="red">
+                <v-btn block elevation="2" color="red" width="100px">
                   <v-icon>mdi-plus-box</v-icon>
                   Pose estimate
                 </v-btn>
@@ -172,7 +251,7 @@
             </v-row>
             <v-row no-gutters class="pa-2">
               <v-col cols="12" class="d-flex justify-center">
-                <v-btn block elevation="2" color="green">
+                <v-btn block elevation="2" color="green" width="100px">
                   <v-icon>mdi-trash-can-outline</v-icon>
                   Navigate
                 </v-btn>
@@ -180,7 +259,7 @@
             </v-row>
             <v-row no-gutters class="pa-2">
               <v-col cols="12" class="d-flex justify-center">
-                <v-btn block elevation="2" color="blue">
+                <v-btn block elevation="2" color="blue" width="100px">
                   <v-icon>mdi-trash-can-outline</v-icon>
                   Manual Control
                 </v-btn>
@@ -192,11 +271,11 @@
             <v-row no-gutters class="d-flex justify-start pa-2">
               <div id="zone_joystick"></div>
             </v-row>
-            
           </v-card>
         </v-col>
       </v-layout>
     </v-container>
+
     <resize-observer @notify="handleResize" />
   </div>
 </template>
@@ -223,9 +302,10 @@ import { ResizeObserver } from "vue-resize";
 import nipplesjs from "nipplejs";
 
 export default {
-  name: "Home",  
+  name: "Home",
   data() {
     return {
+      tab: null,
       emrModeSwitch: false,
       emrModeName: "SLAM",
       //toggle_exclusive: undefined,
@@ -233,11 +313,11 @@ export default {
       toggle_map: undefined,
       toggle_waypoint: undefined,
       //ws_addr: "ws://192.168.1.54:9090",     // Pi4 at home
-      
+
       //ws_addr: "ws://10.222.41.248:9090",  // Pi4 Ros-Noetic at  work
-      
+
       ws_addr: "ws://10.222.41.159:9090", // Intel NUC
-      colWidth: 0,
+      colWidth: 1360,
       timer: null,
 
       // max_linear: 5.0, // m/s
@@ -271,7 +351,6 @@ export default {
       isServerConnected: false,
       publishImmediately: true,
       g_pose: null,
-      
 
       //--- Ros Topic ------
       cmdVelTopic: null,
@@ -293,13 +372,43 @@ export default {
       calIMUSrv: null,
       onSlamSrvReq: null,
       offSlamSrvReq: null,
+      onNavSrvReq: null,
+      offNavSrvReq: null,
+
       onMarkerSrvReq: null,
       offMarkerSrvReq: null,
-      saveMapSrv:null,
-
+      saveMapSrv: null,
 
       //--- Ros Action Client ------
       actionClient: null,
+
+
+      //-----  For map table --------
+      valid: true,
+      newMapName: "",
+      singleSelect: true,
+      selected: [],
+      headers: [
+        {
+          text: "Map Name",
+          align: "center",
+          sortable: false,
+          value: "name",
+        },
+      ],
+      // names: [
+      //   {
+      //     name: "Frozen Yogurt",
+      //   },
+      //   {
+      //     name: "Ice cream sandwich",
+      //   },   
+
+      // ],
+      map:{
+        name:'',
+      },
+
     };
   },
   watch: {
@@ -309,10 +418,10 @@ export default {
     },
   },
   components: {
-    ResizeObserver, 
+    ResizeObserver,
     RMap,
     RWaypoint,
-  }, 
+  },
   mounted() {
     //this.$store.state.modeName = 'Slam Mode';
     //this.$store.dispatch("actionModeName", "Slam Mode");
@@ -335,50 +444,49 @@ export default {
     //var timer;
     // var linear_speed=0, angular_speed=0;
 
-    manager.on("start", function (event, nipple) {
-      //this.startMoveInterval(0.05, 0);  
-      this.timer= setInterval(this.move, 200); 
-      //this.timer= setInterval(this.move1, 200);
-     
-      //console.log("Move start : ", linear_speed ,angular_speed);  
-    }.bind(this));
+    manager.on(
+      "start",
+      function (event, nipple) {
+        //this.startMoveInterval(0.05, 0);
+        this.timer = setInterval(this.move, 200);
+        //this.timer= setInterval(this.move1, 200);
 
-    manager.on("move", function (event, nipple) {
-        
-        var max_linear = 1.0;//5.0; // m/s
-        var max_angular = 1.0;//2.0; // rad/s
+        //console.log("Move start : ", linear_speed ,angular_speed);
+      }.bind(this)
+    );
+
+    manager.on(
+      "move",
+      function (event, nipple) {
+        var max_linear = 1.0; //5.0; // m/s
+        var max_angular = 1.0; //2.0; // rad/s
         var max_distance = 75.0; // pixels;
-        this.linear_speed = Math.sin(nipple.angle.radian) * max_linear * nipple.distance/max_distance;
-        this.angular_speed = -Math.cos(nipple.angle.radian) * max_angular * nipple.distance/max_distance;               
+        this.linear_speed =
+          (Math.sin(nipple.angle.radian) * max_linear * nipple.distance) /
+          max_distance;
+        this.angular_speed =
+          (-Math.cos(nipple.angle.radian) * max_angular * nipple.distance) /
+          max_distance;
 
+        //console.log("Moving : ", this.linear_speed ,this.angular_speed);
+        //this.startMoveInterval(linear_speed, angular_speed);
+      }.bind(this)
+    );
 
-        //console.log("Moving : ", this.linear_speed ,this.angular_speed);     
-        //this.startMoveInterval(linear_speed, angular_speed);    
-        
-    }.bind(this));
+    manager.on(
+      "end",
+      function () {
+        console.log("Move end");
+        this.stopMoveInterval();
+        // if(this.timer)
+        //   clearInterval(this.timer);
+      }.bind(this)
+    );
 
-    manager.on("end",function () {
-      console.log("Move end");
-      this.stopMoveInterval();
-      // if(this.timer)
-      //   clearInterval(this.timer);
-
-      
-    }.bind(this));
-  
-
-
-
-    window.addEventListener("resize", () => {
-        this.colWidth = window.innerWidth;
-        //console.log("col width: ", this.colWidth)
-      });
     //--------------- For Virtual Joy Stick End -------------------
-
   },
 
   methods: {
-  
     connect: function () {
       this.rbServer = new ROSLIB.Ros({
         url: this.ws_addr,
@@ -398,18 +506,25 @@ export default {
         console.log("Connection to websocket server closed.");
       });
 
+      window.addEventListener("resize", () => {
+        this.colWidth = window.innerWidth;
+        console.log("386 : col width: ", this.colWidth);
+      });
+
       this.viewer3d = new Viewer({
         divID: "map3d",
-        width: 640,
-        height: 480,
-        //width: (this.colWidth / 12) * 8,
-        //height:(480),        
+        //width: 640,
+        //height: 480,
+
         antialias: true,
-      });      
+      });
       //window.innerWidth
-      this.viewer3d.resize( window.innerWidth*3/4, window.innerHeight*0.8
-        // document.getElementById("map3d").offsetWidth * 0.96,
-        // ((document.getElementById("map3d").offsetWidth * 3) / 4) * 0.96
+      this.viewer3d.resize(
+        //window.innerWidth*3/4, window.innerHeight*0.8
+        //  document.getElementById("map3d").offsetWidth * 0.96,
+        //  ((document.getElementById("map3d").offsetWidth * 3) / 4) * 0.96
+        (this.colWidth / 12) * 7 * 0.9,
+        (this.colWidth / 12) * 7 * 0.75 * 0.9
       );
 
       var tfClient = new ROSLIB.TFClient({
@@ -460,8 +575,6 @@ export default {
         rootObject: this.viewer3d.scene,
       });
 
-      
-
       new InteractiveMarkerClient({
         ros: this.rbServer,
         tfClient: tfClientM,
@@ -469,7 +582,7 @@ export default {
         camera: this.viewer3d.camera,
         rootObject: this.viewer3d.selectableObjects,
       });
-      
+
       new MarkerClient({
         ros: this.rbServer,
         tfClient: tfClientM,
@@ -512,10 +625,10 @@ export default {
         ros: this.rbServer,
         tfClient: tfClient,
         rootObject: this.viewer3d.scene,
-        topic: "/move_base_flex/GlobalPlanner/plan"
+        topic: "/move_base_flex/GlobalPlanner/plan",
       });
-      this.viewer3d.addObject(pathDisplay)
-/*
+      this.viewer3d.addObject(pathDisplay);
+      /*
       var move_base_status_listener = new ROSLIB.Topic({
         ros: this.rbServer,
         name: move_base_status,
@@ -540,8 +653,6 @@ export default {
       );
 */
 
-
-
       //----- Ros Service ---------
       this.getMapSrv = new ROSLIB.Service({
         ros: this.rbServer,
@@ -555,7 +666,7 @@ export default {
         serviceType: "agv_interface/waypointsarray",
       });
 
-      this.getWaypointNameSrv= new ROSLIB.Service({
+      this.getWaypointNameSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/get_waypoint_name",
         serviceType: "agv_interface/waypointname",
@@ -567,66 +678,66 @@ export default {
         serviceType: "agv_interface/awaypoint",
       });
 
-      this.deleteMapSrv= new ROSLIB.Service({
+      this.deleteMapSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/delete_map",
         serviceType: "agv_interface/deletemap",
       });
 
-      this.deleteWaypointSrv= new ROSLIB.Service({
+      this.deleteWaypointSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/delete_waypoint",
         serviceType: "agv_interface/deletewaypoint",
       });
 
-      this.startNavSrv= new ROSLIB.Service({
+      this.startNavSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/start_navigation",
         serviceType: "agv_interface/navigatesrv",
       });
 
-      this.startSLAMSrv= new ROSLIB.Service({
+      this.startSLAMSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/start_slam",
         serviceType: "agv_interface/slamsrv",
       });
 
-      this.showPoseMarkerSrv= new ROSLIB.Service({
+      this.showPoseMarkerSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/poseestimate_markers_service",
         serviceType: "agv_interface/poseestimate",
       });
 
-      this.showNavMarkerSrv= new ROSLIB.Service({
+      this.showNavMarkerSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/waypoint_markers_service",
         serviceType: "agv_interface/navigatesrv",
       });
 
-      this.setPoseSrv= new ROSLIB.Service({
+      this.setPoseSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/set_pose",
         serviceType: "agv_interface/poseesstimate",
       });
-      
-      this.setPoseSrv= new ROSLIB.Service({
+
+      this.setPoseSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/set_pose",
         serviceType: "agv_interface/poseesstimate",
       });
-      
-      this.getPoseSrv= new ROSLIB.Service({
+
+      this.getPoseSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/get_pose",
         serviceType: "agv_interface/getpose",
       });
-      
-      this.saveMapSrv= new ROSLIB.Service({
+
+      this.saveMapSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/save_map",
         serviceType: "agv_interface/savemaps",
       });
-      
+
       // this.calIMUSrv= new ROSLIB.Service({
       //   ros: this.rbServer,
       //   name: "/imu_cal",
@@ -635,26 +746,36 @@ export default {
 
       this.onSlamSrvReq = new ROSLIB.ServiceRequest({
         onezero: 1,
-        map_file:"map_office",        
+        map_file: "map_office",
       });
-
       console.log(this.onSlamSrvReq);
 
       this.offSlamSrvReq = new ROSLIB.ServiceRequest({
         onezero: 0,
-        map_file:"map_office",        
+        map_file: "map_office",
       });
       console.log(this.onSlamSrvReq);
 
+      this.onNavSrvReq = new ROSLIB.ServiceRequest({
+        onezero: 1,
+        map_file: this.selectedMap,
+      });
+      console.log(this.onNavSrvReq);
+
+      this.offNavSrvReq = new ROSLIB.ServiceRequest({
+        onezero: 0,
+        map_file: this.selectedMap,
+      });
+      console.log(this.offNavSrvReq);
+
       this.onMarkerSrvReq = new ROSLIB.ServiceRequest({
-        onezero: 1,               
+        onezero: 1,
       });
 
       this.offMarkerSrvReq = new ROSLIB.ServiceRequest({
-        onezero: 0,               
+        onezero: 0,
       });
 
-      
       this.loadMap();
     },
     disconnect: function () {
@@ -662,7 +783,7 @@ export default {
       delete this.viewer3d;
       location.reload();
     },
-    move: function(){
+    move: function () {
       var twist = new ROSLIB.Message({
         linear: { x: this.linear_speed, y: 0, z: 0 },
         angular: { x: 0, y: 0, z: this.angular_speed },
@@ -670,62 +791,89 @@ export default {
       console.log("speed:", twist.linear.x, twist.angular.z);
       this.cmdVelTopic.publish(twist);
     },
-    move1: function (){
+    move1: function () {
       var twist = new ROSLIB.Message({
         linear: { x: 0.02, y: 0, z: 0 },
         angular: { x: 0, y: 0, z: 0 },
       });
       this.cmdVelTopic.publish(twist);
     },
-    startMoveInterval: function(lin, ang){
-      if(this.timer)
-        clearInterval(this.timer);
-      this.timer= setInterval(this.move(lin, ang), 200);
+    startMoveInterval: function (lin, ang) {
+      if (this.timer) clearInterval(this.timer);
+      this.timer = setInterval(this.move(lin, ang), 200);
     },
-    stopMoveInterval: function(){
-      if(this.timer)
-        clearInterval(this.timer);
-      this.move(0, 0)
+    stopMoveInterval: function () {
+      if (this.timer) clearInterval(this.timer);
+      this.move(0, 0);
     },
-
 
     handleResize({ width, height }) {
-      console.log("resized", width, height);
-      console.log(document.getElementById("map3d").offsetWidth);
+      //console.log("resized", width, height);
+      //console.log("clientWidth" , document.getElementById("map3d").clientWidth);
       this.viewer3d.resize(
-        (window.innerWidth*3/4)*0.9, window.innerHeight*0.8
-        // document.getElementById("map3d").offsetWidth * 0.96,
+        //  document.getElementById("map3d").offsetWidth * 0.96,
         // (document.getElementById("map3d").offsetWidth * 0.96 * 3) / 4
+        (width / 12) * 7 * 0.9,
+        (width / 12) * 7 * 0.75 * 0.9
       );
-      // this.viewer3d.resize(
-      //   document.getElementById("map3d").offsetWidth * 0.96,
-      //   (document.getElementById("map3d").offsetWidth * 0.96 * 3) / 4
-      // );
     },
-    calIMU(){
+    calIMU() {
       var param = new ROSLIB.ServiceRequest({});
-      this.calIMUSrv.callService(param, function(result){
+      this.calIMUSrv.callService(param, function (result) {
         console.log(result);
       });
     },
-    saveMap(item){
-      console.log(item)
-      this.newMapName = item.name;
-      var mapName_ = new ROSLIB.ServiceRequest({
-        mapfile: this.newMapName,
-      });
+    saveMap() {
+      console.log(item);
+      if( this.newMapName !=="")
+      {
+        const result = this.mapNames.find(this.checkDuplicate);
+        if(result == undefined)
+        {
+          //this.names.push({name:this.newMapName});      
+          this.mapNames.push({name:this.newMapName});      
+          console.log('Save Map');
+          //console.log(this.newMapName);
+          //this.$emit("mapSave", {name: this.newMapName});
+          this.newMapName = item.name;
+          var mapName_ = new ROSLIB.ServiceRequest({
+            mapfile: this.newMapName,
+          });
 
-      console.log(this.newMapName);
-      console.log(mapName_);
-      this.saveMapSrv.callService(mapName_, function(result){
-        console.log(result);
-      }); 
+          console.log(this.newMapName);
+          console.log(mapName_);
+          this.saveMapSrv.callService(mapName_, function (result) {
+            console.log(result);
+          });
+
+          this.newMapName = "";
+          // this.dialog = false;
+        }
+        else
+        {
+          alert('Existing map name.')
+        }
+
+      }
+
+
+
+      // this.newMapName = item.name;
+      // var mapName_ = new ROSLIB.ServiceRequest({
+      //   mapfile: this.newMapName,
+      // });
+
+      // console.log(this.newMapName);
+      // console.log(mapName_);
+      // this.saveMapSrv.callService(mapName_, function (result) {
+      //   console.log(result);
+      // });
     },
-    setPose(){
-      this.setPoseSrv.callService(this.onMarkerSrvReq, function(result){
+    setPose() {
+      this.setPoseSrv.callService(this.onMarkerSrvReq, function (result) {
         console.log(result);
       });
-    },  
+    },
     setWaypoint() {
       console.log("set waypoint");
       console.log(this.selectedMap);
@@ -893,14 +1041,13 @@ export default {
           });
 
           console.log(this.mapNames);
-          
         }.bind(this)
       );
     },
     deleteAMap(item) {
       console.log("Delete map");
-      console.log(item)
-      this.selectedMap = item.name
+      console.log(item);
+      this.selectedMap = item.name;
 
       var delMapParam = new ROSLIB.ServiceRequest({
         mapfile: this.selectedMap,
@@ -955,9 +1102,12 @@ export default {
           var getwaypointparam2 = new ROSLIB.ServiceRequest({
             name: this.selectedMap,
           });
-          this.getWayPointsSrv.callService(getwaypointparam2, function (result) {
-            console.log(result);
-          });
+          this.getWayPointsSrv.callService(
+            getwaypointparam2,
+            function (result) {
+              console.log(result);
+            }
+          );
         }.bind(this)
       );
     },
@@ -1021,29 +1171,88 @@ export default {
     },
 
     slamClick() {
-      this.emrModeName = "SLAM";
-      this.isSLAM = true;
-      this.isNav = false;
+      if (this.emrModeName == "SLAM") {
+        this.emrModeName = "";
+        this.isSLAM = false;
+        this.isNav = false;
+        this.toggle_mode = undefined;
 
-      if (this.isSLAM == true) {
-        this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
-          console.log(result);
-        });
-        //this.$store.commit("setIsSlamRunning", true);
-      } 
+        if (this.isSlam == false) {
+          this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+      } else {
+        this.emrModeName = "SLAM";
+        this.isSLAM = true;
+        this.isNav = false;
 
+        // off navigation mode first
+        if (this.isNav == false) {
+          this.startNavSrv.callService(this.offNavSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+        //--------------------------
+        if (this.isSLAM == true) {
+          this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
+            console.log(result);
+          });
+          //this.$store.commit("setIsSlamRunning", true);
+        }
+      }
     },
     navClick() {
-      this.emrModeName = "Navigation";
-      this.isSLAM = false;
-      this.isNav = true;
-      if (this.isSlam == false){
-        this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
-          console.log(result);
-        });
-      }
+      if (this.emrModeName == "Navigation") {
+        this.emrModeName = "";
+        this.toggle_mode = undefined;
+        this.isSLAM = false;
+        this.isNav = false;
 
-     
+        // off navigation mode first
+        if (this.isNav == false) {
+          this.startNavSrv.callService(this.offNavSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+      } else {
+        this.emrModeName = "Navigation";
+        this.isSLAM = false;
+        this.isNav = true;
+
+        // off slam mode first
+        if (this.isSlam == false) {
+          this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+        //-----------------------
+
+        if (this.isNav == true) {
+          if (this.selectedMap == "") {
+            this.$alert("Choose a map first");
+            this.isNav = false;
+            console.log("After dialog");
+            console.log(this.isNav);
+          } else {
+            this.startNavSrv.callService(this.onNavSrvReq, function (result) {
+              console.log(result);
+            });
+            //this.$store.commit("setIsNavRunning", true);
+          }
+        }
+      }
+    },
+    useMap(item) {
+      console.log("Use map");
+      console.log(item);
+      this.selectedMap = item.name;
+
+      console.log(this.selectedMap);
+    },
+    checkDuplicate(val)
+    {
+      return val.name == this.newMapName;
     },
     // mapSaveClick() {
     //   console.log("Save map");
@@ -1060,11 +1269,6 @@ export default {
     // waypointDeleteClick() {
     //   console.log("Delete waypoint");
     // },
-    MapSave(){
-
-    },
   },
-
-  
 };
 </script>

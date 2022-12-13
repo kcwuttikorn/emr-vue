@@ -4,7 +4,9 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 //import VueWindowSize from 'vue-window-size';
-import VueResize from 'vue-resize'
+import VueResize from 'vue-resize';
+
+import VueSimpleAlert from "vue-simple-alert";
 
 Vue.config.productionTip = false
 
@@ -19,3 +21,4 @@ new Vue({
 
 //Vue.use(VueWindowSize);
 Vue.use(VueResize);
+Vue.use(VueSimpleAlert);
