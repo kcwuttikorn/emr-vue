@@ -3,7 +3,7 @@
     <v-container fluid ma-0 pa-0 fill-height class="blue">
       <!-- <v-row class="yellow lighten-5" > -->
       <v-layout>
-        <v-col cols="7">
+        <v-col cols="9">
           <v-card fluid class="yellow lighten-5 pa-1 d-flex justify-center">
             <!-- <v-row no-gutters class="d-flex justify-center pa-1"> -->
             <!-- <div>
@@ -43,153 +43,9 @@
               </v-col>
             </v-row>
           </v-card>
-        </v-col>
+        </v-col>       
 
         <v-col cols="3">
-          <v-card
-            fluid
-            fill-height
-            height="680px"
-            class="yellow lighten-5 pa-1"
-          >
-            <!-- <v-divider color="orange"></v-divider> -->
-
-            <v-row no-gutters class="d-flex justify-start">
-              <span class="font-weight-light pa-1 purple--text">
-                Use Map : {{ this.selectedMap }}</span
-              >
-            </v-row>
-
-            <v-divider color="orange"></v-divider>
-
-            <v-tabs
-              v-model="tab"
-              fixed-tabs
-              background-color="light-blue"
-              center-active
-              dark
-              outlined
-            >
-              <v-tabs-slider color="yellow"></v-tabs-slider>
-              <v-tab>Map</v-tab>
-              <v-tab>Way Point</v-tab>
-            </v-tabs>
-            <v-tabs-items v-model="tab">
-              <v-tab-item>
-                <!-- <v-card-text class="text-subtitle-1 font-weight-bold"
-                  >Map:</v-card-text
-                > -->
-                <v-card>
-                  <!-- <v-card-title>
-                    <span class="text-h6">Map Name:</span>
-                  </v-card-title> -->
-                  <v-card-text>
-                    <v-container>
-                      <v-row>
-                        <v-data-table
-                          v-model="selected"
-                          :headers="headers"
-                          :items="mapNames"
-                          :single-select="singleSelect"
-                          item-key="name"
-                          show-select
-                          class="elevation-1"
-                          fixed-header
-                          height="150"
-                        >
-                          <template v-slot:top>
-                            <v-switch
-                              
-                              v-model="singleSelect"
-                              label="Single select"
-                              class="pa-3"
-                            ></v-switch>
-                          </template>
-                        </v-data-table>
-                      </v-row>
-                      <v-row>
-                        <v-col cols="12">
-                          <v-form ref="form" v-model="valid" lazy-validation>
-                            <v-text-field
-                              v-model="newMapName"
-                              label="New map name"
-                              ref="inputRef"
-                              required
-                            >
-                            </v-text-field>
-                          </v-form>
-                        </v-col>
-
-                        <!-- <v-col cols="4">                          
-                          <v-card-actions>
-                            <v-btn
-                              color="blue darken-1"
-                              outlined
-                              @click="saveMap"
-                              small
-                            >
-                              <v-icon>mdi-content-save-settings</v-icon>
-                              <span>Save</span>
-                            </v-btn>
-                          </v-card-actions>
-                        </v-col> -->
-                      </v-row>
-                    </v-container>
-                    <!-- <small>*indicates required field</small> -->
-                  </v-card-text>
-
-                  <v-card-actions>
-
-                    <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" outlined @click="saveMap" small>
-                      <v-icon>mdi-content-save-settings</v-icon>
-                      <span>Save</span>
-                    </v-btn>
-                    <v-btn color="green darken-1" outlined @click="useMap" small>
-                      <v-icon>mdi-file-download</v-icon>
-                      <span>Use</span>
-                    </v-btn>
-                    <v-btn color="red darken-1" outlined @click="deleteMap" small>
-                      <v-icon>mdi-trash-can-outline</v-icon>
-                      <span>Delete</span>
-                    </v-btn>
-                    <!-- <v-btn
-                      color="black darken-1"
-                      outlined
-                      @click="dialog = false"
-                      small
-                    >
-                      <v-icon right>mdi-exit-to-app</v-icon>
-                      <span>Close</span>
-                    </v-btn> -->
-                  </v-card-actions>
-                </v-card>
-              </v-tab-item>
-
-              <v-tab-item>
-                <v-card-text class="text-subtitle-1 font-weight-bold"
-                  >Waypoint:</v-card-text
-                >
-              </v-tab-item>
-            </v-tabs-items>
-
-            <v-divider color="orange"></v-divider>
-
-            <v-row no-gutters class="d-flex justify-center">
-              <v-col cols="4" class="pa-3 ma-3">
-                <RMap
-                  @mapSave="saveMap"
-                  @mapDelete="deleteAMap"
-                  @mapUse="useMap"
-                  :mapNames="mapNames"
-                />
-              </v-col>
-              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-
-        <v-col cols="2">
           <v-card
             fluid
             class="yellow lighten-5 pa-1"
@@ -217,26 +73,21 @@
             <v-divider color="orange"></v-divider>
 
             <v-row no-gutters class="d-flex justify-center">
-              <span class="font-weight-light pa-1 purple--text"
+              <span x-large class="font-weight-light pa-1 purple--text"
                 >EMR-Mode : {{ emrModeName }}</span
               >
             </v-row>
 
-            <v-row
-              no-gutters
-              align="center"
-              justify="center"
-              class="d-flex justify-center"
-            >
+            <v-row no-gutters align="center" justify="center" class="d-flex justify-center">
               <v-btn-toggle v-model="toggle_mode" mandatory class="pa-2">
-                <v-btn large elevation="2" color="primary" @click="slamClick"
+                <v-btn large elevation="2" color="primary" @click="slamClick" width="120"
                   >SLAM
                 </v-btn>
-                <v-btn large elevation="2" color="success" @click="navClick"
+                <v-btn large elevation="2" color="success" @click="navClick" width="120"
                   >Navigation
                 </v-btn>
               </v-btn-toggle>
-              <p>{{ toggle_mode }}</p>
+              <!-- <p>{{toggle_mode}}</p> -->
             </v-row>
 
             <v-divider color="orange"></v-divider>
@@ -264,6 +115,27 @@
                   Manual Control
                 </v-btn>
               </v-col>
+            </v-row>
+
+            <v-divider color="orange"></v-divider>   
+            
+            <v-row no-gutters class="d-flex justify-start">
+              <span class="font-weight-light pa-1 purple--text">
+                Use Map : {{ this.selectedMap }}</span
+              >
+            </v-row>
+            <v-row no-gutters class="d-flex justify-center">
+              
+
+              <v-col cols="4" class="pa-3 ma-3">
+                <RMap
+                  @mapSave="saveMap"
+                  @mapDelete="deleteAMap"
+                  @mapUse="useMap"
+                  :mapNames="mapNames"
+                />
+              </v-col>
+              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
             </v-row>
 
             <v-divider color="orange"></v-divider>
@@ -381,34 +253,6 @@ export default {
 
       //--- Ros Action Client ------
       actionClient: null,
-
-
-      //-----  For map table --------
-      valid: true,
-      newMapName: "",
-      singleSelect: true,
-      selected: [],
-      headers: [
-        {
-          text: "Map Name",
-          align: "center",
-          sortable: false,
-          value: "name",
-        },
-      ],
-      // names: [
-      //   {
-      //     name: "Frozen Yogurt",
-      //   },
-      //   {
-      //     name: "Ice cream sandwich",
-      //   },   
-
-      // ],
-      map:{
-        name:'',
-      },
-
     };
   },
   watch: {
@@ -823,51 +667,18 @@ export default {
         console.log(result);
       });
     },
-    saveMap() {
+    saveMap(item) {
       console.log(item);
-      if( this.newMapName !=="")
-      {
-        const result = this.mapNames.find(this.checkDuplicate);
-        if(result == undefined)
-        {
-          //this.names.push({name:this.newMapName});      
-          this.mapNames.push({name:this.newMapName});      
-          console.log('Save Map');
-          //console.log(this.newMapName);
-          //this.$emit("mapSave", {name: this.newMapName});
-          this.newMapName = item.name;
-          var mapName_ = new ROSLIB.ServiceRequest({
-            mapfile: this.newMapName,
-          });
+      this.newMapName = item.name;
+      var mapName_ = new ROSLIB.ServiceRequest({
+        mapfile: this.newMapName,
+      });
 
-          console.log(this.newMapName);
-          console.log(mapName_);
-          this.saveMapSrv.callService(mapName_, function (result) {
-            console.log(result);
-          });
-
-          this.newMapName = "";
-          // this.dialog = false;
-        }
-        else
-        {
-          alert('Existing map name.')
-        }
-
-      }
-
-
-
-      // this.newMapName = item.name;
-      // var mapName_ = new ROSLIB.ServiceRequest({
-      //   mapfile: this.newMapName,
-      // });
-
-      // console.log(this.newMapName);
-      // console.log(mapName_);
-      // this.saveMapSrv.callService(mapName_, function (result) {
-      //   console.log(result);
-      // });
+      console.log(this.newMapName);
+      console.log(mapName_);
+      this.saveMapSrv.callService(mapName_, function (result) {
+        console.log(result);
+      });
     },
     setPose() {
       this.setPoseSrv.callService(this.onMarkerSrvReq, function (result) {
@@ -1171,75 +982,48 @@ export default {
     },
 
     slamClick() {
-      if (this.emrModeName == "SLAM") {
-        this.emrModeName = "";
-        this.isSLAM = false;
-        this.isNav = false;
-        this.toggle_mode = undefined;
+      this.emrModeName = "SLAM";
+      this.isSLAM = true;
+      this.isNav = false;
 
-        if (this.isSlam == false) {
-          this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
-            console.log(result);
-          });
-        }
-      } else {
-        this.emrModeName = "SLAM";
-        this.isSLAM = true;
-        this.isNav = false;
-
-        // off navigation mode first
-        if (this.isNav == false) {
-          this.startNavSrv.callService(this.offNavSrvReq, function (result) {
-            console.log(result);
-          });
-        }
-        //--------------------------
-        if (this.isSLAM == true) {
-          this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
-            console.log(result);
-          });
-          //this.$store.commit("setIsSlamRunning", true);
-        }
+      // off navigation mode first
+      if (this.isNav == false) {
+        this.startNavSrv.callService(this.offNavSrvReq, function (result) {
+          console.log(result);
+        });
+      }
+      //--------------------------
+      if (this.isSLAM == true) {
+        this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
+          console.log(result);
+        });
+        //this.$store.commit("setIsSlamRunning", true);
       }
     },
     navClick() {
-      if (this.emrModeName == "Navigation") {
-        this.emrModeName = "";
-        this.toggle_mode = undefined;
-        this.isSLAM = false;
-        this.isNav = false;
+      this.emrModeName = "Navigation";
+      this.isSLAM = false;
+      this.isNav = true;
 
-        // off navigation mode first
-        if (this.isNav == false) {
-          this.startNavSrv.callService(this.offNavSrvReq, function (result) {
+      // off slam mode first
+      if (this.isSlam == false) {
+        this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
+          console.log(result);
+        });
+      }
+      //-----------------------
+
+      if (this.isNav == true) {
+        if (this.selectedMap == "") {
+          this.$alert("Choose a map first");
+          this.isNav = false;
+          console.log("After dialog");
+          console.log(this.isNav);
+        } else {
+          this.startNavSrv.callService(this.onNavSrvReq, function (result) {
             console.log(result);
           });
-        }
-      } else {
-        this.emrModeName = "Navigation";
-        this.isSLAM = false;
-        this.isNav = true;
-
-        // off slam mode first
-        if (this.isSlam == false) {
-          this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
-            console.log(result);
-          });
-        }
-        //-----------------------
-
-        if (this.isNav == true) {
-          if (this.selectedMap == "") {
-            this.$alert("Choose a map first");
-            this.isNav = false;
-            console.log("After dialog");
-            console.log(this.isNav);
-          } else {
-            this.startNavSrv.callService(this.onNavSrvReq, function (result) {
-              console.log(result);
-            });
-            //this.$store.commit("setIsNavRunning", true);
-          }
+          //this.$store.commit("setIsNavRunning", true);
         }
       }
     },
@@ -1249,10 +1033,6 @@ export default {
       this.selectedMap = item.name;
 
       console.log(this.selectedMap);
-    },
-    checkDuplicate(val)
-    {
-      return val.name == this.newMapName;
     },
     // mapSaveClick() {
     //   console.log("Save map");
