@@ -3,19 +3,64 @@
     <v-container fluid ma-0 pa-0 fill-height class="blue">
       <!-- <v-row class="yellow lighten-5" > -->
       <v-layout>
-        <v-col cols="9">
+        <v-col cols="6">
           <v-card fluid class="yellow lighten-5 pa-1 d-flex justify-center">
-            <!-- <v-row no-gutters class="d-flex justify-center pa-1"> -->
-            <!-- <div>
-              <p>window width: {{ windowWidth }}</p>
-              <p>window height: {{ windowHeight }}</p>
-            </div> -->
+            <!-- <v-row no-gutters class="d-flex justify-center"> -->
+            <v-row no-gutters>
+              <v-col cols="3" class="d-flex justify-center align-center">
+                <v-btn
+                  x-large
+                  text
+                  color="red"
+                  v-if="connected"
+                  @click="disconnect"
+                >
+                  <span>Disconnect</span>
+                  <v-icon right>mdi-exit-to-app</v-icon>
+                </v-btn>
 
-            <div id="map3d"></div>
+                <v-btn x-large text color="green" v-else @click="connect">
+                  <span>Connect</span>
+                  <v-icon right>mdi-exit-to-app</v-icon>
+                </v-btn>
+              </v-col>
 
-            <!-- </v-row>           -->
+              <v-divider vertical color="grey"></v-divider>
+
+              <!-- <v-col cols="9"> -->
+              <v-col cols="4" class="d-flex justify-start align-center">
+                <!-- <v-row no-gutters > -->
+                <span x-large class="font-weight-light pa-3 purple--text"
+                  >EMR-Mode : {{ emrModeName }}</span
+                >
+                <!-- </v-row> -->
+              </v-col>
+
+              <v-col cols="5" class="d-flex justify-end align-center">
+                <!-- <v-row no-gutters > -->
+                <v-btn-toggle v-model="toggle_mode" mandatory class="pr-3">
+                  <v-btn
+                    large
+                    elevation="2"
+                    color="primary"
+                    @click="slamClick"
+                    width="120"
+                    >SLAM
+                  </v-btn>
+                  <v-btn
+                    large
+                    elevation="2"
+                    color="success"
+                    @click="navClick"
+                    width="120"
+                    >Navigation
+                  </v-btn>
+                </v-btn-toggle>
+                <!-- </v-row> -->
+              </v-col>
+              <!-- </v-col> -->
+            </v-row>
           </v-card>
-
           <v-card class="yellow lighten-5 pa-1 my-1 d-flex justify-center">
             <v-row>
               <v-col cols="2" class="d-flex justify-center">
@@ -43,102 +88,327 @@
               </v-col>
             </v-row>
           </v-card>
-        </v-col>       
+          <v-card fluid class="yellow lighten-5 pa-1 d-flex justify-center">
+            <!-- <v-row no-gutters class="d-flex justify-center pa-1"> -->
+            <!-- <div>
+              <p>window width: {{ windowWidth }}</p>
+              <p>window height: {{ windowHeight }}</p>
+            </div> -->
 
-        <v-col cols="3">
+            <div id="map3d"></div>
+
+            <!-- </v-row>           -->
+          </v-card>
+        </v-col>
+
+        <v-col cols="6">
           <v-card
             fluid
             class="yellow lighten-5 pa-1"
             fill-height
-            height="680px"
-          >
-            <v-row no-gutters class="d-flex justify-center">
-              <v-btn
-                x-large
-                text
-                color="red"
-                v-if="connected"
-                @click="disconnect"
-              >
-                <span>Disconnect</span>
-                <v-icon right>mdi-exit-to-app</v-icon>
-              </v-btn>
-
-              <v-btn x-large text color="green" v-else @click="connect">
-                <span>Connect</span>
-                <v-icon right>mdi-exit-to-app</v-icon>
-              </v-btn>
-            </v-row>
-
-            <v-divider color="orange"></v-divider>
-
-            <v-row no-gutters class="d-flex justify-center">
-              <span x-large class="font-weight-light pa-1 purple--text"
-                >EMR-Mode : {{ emrModeName }}</span
-              >
-            </v-row>
-
-            <v-row no-gutters align="center" justify="center" class="d-flex justify-center">
-              <v-btn-toggle v-model="toggle_mode" mandatory class="pa-2">
-                <v-btn large elevation="2" color="primary" @click="slamClick" width="120"
-                  >SLAM
-                </v-btn>
-                <v-btn large elevation="2" color="success" @click="navClick" width="120"
-                  >Navigation
-                </v-btn>
-              </v-btn-toggle>
-              <!-- <p>{{toggle_mode}}</p> -->
-            </v-row>
-
-            <v-divider color="orange"></v-divider>
-
-            <v-row no-gutters class="pa-2">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-btn block elevation="2" color="red" width="100px">
+            height="600px"
+          >    
+            <!-- <v-row >
+              <v-col cols="6" class="d-flex justify-center align-center">
+                <v-checkbox v-model="isPose" @change="updatePose"> </v-checkbox>
+                <v-btn
+                  elevation="2"
+                  :disabled="!isPose"
+                  color="red"
+                  width="180px"
+                  @click="setPose"
+                >
                   <v-icon>mdi-plus-box</v-icon>
                   Pose estimate
                 </v-btn>
               </v-col>
-            </v-row>
-            <v-row no-gutters class="pa-2">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-btn block elevation="2" color="green" width="100px">
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                  Navigate
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-row no-gutters class="pa-2">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-btn block elevation="2" color="blue" width="100px">
-                  <v-icon>mdi-trash-can-outline</v-icon>
-                  Manual Control
-                </v-btn>
-              </v-col>
-            </v-row>
 
-            <v-divider color="orange"></v-divider>   
+              <v-col cols="6" class="d-flex justify-center align-center">
+                <v-checkbox v-model="isWayPoint" @change="updateWaypoint">
+                </v-checkbox>
+                <v-btn
+                  elevation="2"
+                  :disabled="!isWayPoint"
+                  color="green"
+                  width="180px"
+                  @click="setWaypoint"
+                >
+                  <v-icon>mdi-trash-can-outline</v-icon>
+                  Set Waypoint
+                </v-btn>
+              </v-col>
+            </v-row> -->
+
+            <v-row>              
+              <v-card-title>
+                <span class="text-h5 font-weight-light  purple--text">Current Map :</span>
+                
+                <span class="text-h5 font-weight-light px-3 green--text" v-if ="this.selectedMap !== ''">{{ this.selectedMap }}</span>
+                <span class="text-h5 font-weight-light px-3 red--text" v-else>No map load</span>
+              </v-card-title>
+            </v-row>
+            <v-divider color="orange"></v-divider>
+
             
-            <v-row no-gutters class="d-flex justify-start">
-              <span class="font-weight-light pa-1 purple--text">
-                Use Map : {{ this.selectedMap }}</span
-              >
-            </v-row>
-            <v-row no-gutters class="d-flex justify-center">
-              
 
+            <v-row>  
+              <v-col cols="9">   <!-- Map & Waypoint    -->
+                <v-layout column align-start>
+                  <!-- <v-card class="pa-2" outlined> cam</v-card> -->
+                  <v-card >
+                    <v-tabs
+                      v-model="tab"
+                      background-color="light-blue"
+                      dark
+                      centered
+                      class="pa-1"
+                      outlined
+                    >
+                      <v-tabs-slider color="yellow"></v-tabs-slider>
+                      <v-tab v-for="item in items" :key="item.tab">
+                        {{ item.tab }}
+                      </v-tab>
+                    </v-tabs>
+
+                    <v-tabs-items v-model="tab">
+                     <v-tab-item>          <!-- Map Table -->
+                        <v-container>
+                          <v-card  height="420px" class="yellow lighten-5">                            
+                            <v-card-text>
+                              <v-container>
+                                <v-row>
+                                  <v-col
+                                    cols="9"
+                                    class="d-flex justify-start"
+                                  >
+                                    <v-form
+                                      ref="form"
+                                      v-model="validMap"
+                                      lazy-validation                                      
+                                    >
+                                      <v-text-field
+                                        v-model="newMapName"
+                                        label="New map name"
+                                        ref="inputRef"
+                                        required                                        
+                                      >
+                                      </v-text-field>
+                                    </v-form>
+                                  </v-col>
+
+                                  <v-col
+                                    cols="3"
+                                    class="d-flex justify-center "
+                                  >
+                                    <v-card-actions>
+                                      <v-btn
+                                        small
+                                        color="blue darken-1"
+                                        outlined
+                                        @click="saveMap"
+                                      >
+                                        <v-icon
+                                          >mdi-content-save-settings</v-icon
+                                        >
+                                        <span>Save</span>
+                                      </v-btn>
+                                    </v-card-actions>
+                                  </v-col>
+                                </v-row>
+
+                                <v-row>
+                                  <v-data-table
+                                    class="elevation-1"
+                                    v-model="mapSelected"
+                                    :headers="mapHeaders"
+                                    :items="mapNames"                                    
+                                    item-key="name"
+                                    show-select
+                                    single-select
+                                    fixed-header
+                                    height="250"
+                                    hide-default-footer
+                                  >
+                                    
+                                  </v-data-table>
+                                </v-row>
+                              </v-container>
+                              <!-- <small>*indicates required field</small> -->
+                            </v-card-text>
+
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                small
+                                color="green darken-1"
+                                outlined
+                                @click="useMap"
+                              >
+                                <v-icon>mdi-file-download</v-icon>
+                                <span>Use</span>
+                              </v-btn>
+                              <v-btn
+                                small
+                                color="red darken-1"
+                                outlined
+                                @click="deleteMap"
+                              >
+                                <v-icon>mdi-trash-can-outline</v-icon>
+                                <span>Delete</span>
+                              </v-btn>                              
+                            </v-card-actions>
+                          </v-card>
+                        </v-container>
+                      </v-tab-item>
+
+                      <v-tab-item>
+                        <v-container>
+                          <v-card height="420px" class="yellow lighten-5">
+                            
+                            <v-card-text>
+                              <v-container>
+                                <v-row>
+                                  <v-col
+                                    cols="8"
+                                    class="d-flex justify-start "
+                                  >
+                                    <v-form
+                                      ref="form"
+                                      v-model="validWaypoint"
+                                      lazy-validation
+                                    >
+                                      <v-text-field
+                                        v-model="newWaypointName"
+                                        label="New waypoint name"
+                                        required
+                                      >
+                                      </v-text-field>
+                                    </v-form>
+                                  </v-col>
+
+                                  <v-col
+                                    cols="4"
+                                    class="d-flex justify-center"
+                                  >
+                                    <v-card-actions>
+                                      <v-checkbox v-model="isWayPoint" @change="updateWaypoint" :disabled="this.selectedMap ===''"></v-checkbox>
+                                      <v-btn
+                                        small
+                                        color="blue darken-1"
+                                        outlined 
+                                        :disabled="!isWayPoint"
+                                        @click="setWaypoint"
+                                      >
+                                        <v-icon>mdi-plus-box</v-icon>
+                                        <span>add</span>
+                                      </v-btn>
+                                    </v-card-actions>
+                                  </v-col>
+                                </v-row>
+
+                                <v-row>
+                                  <v-data-table
+                                    class="elevation-1"
+                                    v-model="waypointSelected"
+                                    :headers="waypointHeaders"
+                                    :items="waypoints"
+                                    item-key="name"
+                                    show-select
+                                    fixed-header
+                                    height="200"
+                                    hide-default-footer
+                                  >
+                                  </v-data-table>
+                                </v-row>
+
+                                
+                              </v-container>
+                         
+                            </v-card-text>
+
+                            <v-card-actions>
+                              <v-spacer></v-spacer>
+
+                              <v-btn
+                                small
+                                color="green darken-1"
+                                outlined
+                              >
+                                <v-icon>mdi-file-download</v-icon>
+                                <span>Go</span>
+                              </v-btn>
+
+                              <v-btn
+                                small
+                                color="red darken-1"
+                                outlined
+                                @click="deleteWaypoint"
+                              >
+                                <v-icon>mdi-trash-can-outline</v-icon>
+                                <span>Delete</span>
+                              </v-btn>
+                              
+                            </v-card-actions>
+                          </v-card>
+                        </v-container>
+                      </v-tab-item>
+                    </v-tabs-items>
+                  </v-card>
+                </v-layout>
+              </v-col>
+              <!-- <v-divider color="orange" vertical></v-divider> -->
+              <v-col cols="3">
+                <v-row class="d-flex justify-start align-center">
+                  <v-checkbox v-model="isPose" @change="updatePose"> </v-checkbox>
+                  <v-btn
+                    small
+                    elevation="2"
+                    :disabled="!isPose"
+                    color="red"
+                    width="120px"
+                    @click="setPose"
+                  >
+                    <!-- <v-icon>mdi-plus-box</v-icon> -->
+                    Pose estimate
+                  </v-btn>
+                </v-row>
+
+                <!-- <v-row class="d-flex justify-start align-center">
+                  <v-checkbox v-model="isWayPoint" @change="updateWaypoint" :disabled="this.selectedMap ===''"></v-checkbox>
+                  <v-btn
+                    small
+                    elevation="2"
+                    :disabled="!isWayPoint"
+                    color="green"
+                    width="120px"
+                    @click="setWaypoint"
+                  >
+                    
+                    Set Waypoint
+                  </v-btn>
+                </v-row> -->
+                 
+              <!-- <v-divider color="orange"></v-divider> -->
+                
+
+              </v-col>
+            </v-row>
+
+            
+
+            <v-row no-gutters class="d-flex justify-center">
               <v-col cols="4" class="pa-3 ma-3">
-                <RMap
+                <!-- <RMap
                   @mapSave="saveMap"
                   @mapDelete="deleteAMap"
                   @mapUse="useMap"
                   :mapNames="mapNames"
-                />
+                /> -->
               </v-col>
-              <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col>
+              <!-- <v-col cols="4" class="pa-3 ma-3"> <RWaypoint /> </v-col> -->
             </v-row>
 
-            <v-divider color="orange"></v-divider>
+
 
             <v-row no-gutters class="d-flex justify-start pa-2">
               <div id="zone_joystick"></div>
@@ -154,8 +424,8 @@
 
 <script>
 //import { useWindowSize } from 'vue-window-size';
-import RMap from "../components/RMap.vue";
-import RWaypoint from "../components/RWaypoint.vue";
+//import RMap from "../components/RMap.vue";
+//import RWaypoint from "../components/RWaypoint.vue";
 import ROSLIB from "roslib";
 import {
   Viewer,
@@ -178,13 +448,19 @@ export default {
   data() {
     return {
       tab: null,
+      items: [
+        { tab: "Map", content: "Tab 1 Content" },
+        { tab: "Waypoint", content: "Tab 2 Content" },
+      ],
       emrModeSwitch: false,
-      emrModeName: "SLAM",
+      emrModeName: "",
       //toggle_exclusive: undefined,
       toggle_mode: undefined,
       toggle_map: undefined,
       toggle_waypoint: undefined,
-      //ws_addr: "ws://192.168.1.54:9090",     // Pi4 at home
+      checkbox1: false,
+      checkbox2: false,
+      //ws_addr: "ws://192.168.1.75:9090",     
 
       //ws_addr: "ws://10.222.41.248:9090",  // Pi4 Ros-Noetic at  work
 
@@ -207,12 +483,59 @@ export default {
       selectedMap: "",
       mapFields: ["selected", "name"],
       newMapName: "",
+      mapSelected: [],
+      mapHeaders: [
+        {
+          text: "Map Name",
+          align: "center",
+          sortable: false,
+          value: "name",
+          width :"360px"
+        },
+      ],
+      map:{
+        name:'',
+      },
+      validMap: true,
+    
 
-      wayPoints: [],
+      waypoints: [],
       selectedWayPoint: "",
-      wayPointFields: ["selected", "name"],
-      newWayPointName: "",
+      waypointFields: ["selected", "name"],
+      newWaypointName: "",
+      waypointSelected:[],
+      waypointHeaders: [
+      {
+        text: "Name",
+        align: "center",
+        sortable: false,
+        value: "name",
+        width :"90px"
+      },
+      {
+        text: "Pose X",
+        align: "center",
+        sortable: false,
+        value: "poseX",
+        width :"90px"
+      },
+      {
+        text: "Pose Y",
+        align: "center",
+        sortable: false,
+        value: "poseY",
+        width :"90px"
+      },
+      {
+        text: "Orient Z",
+        align: "center",
+        sortable: false,
+        value: "OrientZ",
+        width :"90px"
+      },
+    ],
       seqWayPoint: 1,
+      validWaypoint: true,
 
       isWaypointAvailable: false,
       isNav: false,
@@ -263,8 +586,8 @@ export default {
   },
   components: {
     ResizeObserver,
-    RMap,
-    RWaypoint,
+    //RMap,
+    //RWaypoint,
   },
   mounted() {
     //this.$store.state.modeName = 'Slam Mode';
@@ -275,7 +598,7 @@ export default {
     var option = {
       zone: document.getElementById("zone_joystick"),
       mode: "static",
-      position: { left: "50%", top: "86%" },
+      position: { left: "85%", top: "80%" },
       //position: "absolute",
       color: "blue",
       threshold: 0.25,
@@ -352,7 +675,7 @@ export default {
 
       window.addEventListener("resize", () => {
         this.colWidth = window.innerWidth;
-        console.log("386 : col width: ", this.colWidth);
+        //console.log("386 : col width: ", this.colWidth);
       });
 
       this.viewer3d = new Viewer({
@@ -361,14 +684,17 @@ export default {
         //height: 480,
 
         antialias: true,
+        //background: '#CFD8DC',
+        cameraPose: { x: 0, y: 0, z: 10 },
+        //displayPanAndZoomFrame: false,
       });
       //window.innerWidth
       this.viewer3d.resize(
         //window.innerWidth*3/4, window.innerHeight*0.8
         //  document.getElementById("map3d").offsetWidth * 0.96,
         //  ((document.getElementById("map3d").offsetWidth * 3) / 4) * 0.96
-        (this.colWidth / 12) * 7 * 0.9,
-        (this.colWidth / 12) * 7 * 0.75 * 0.9
+        (this.colWidth / 12) * 6 * 0.9,
+        (this.colWidth / 12) * 6 * 0.75 * 0.9
       );
 
       var tfClient = new ROSLIB.TFClient({
@@ -410,6 +736,7 @@ export default {
       // new UrdfClient({
       //   ros: this.rbServer,
       //   tfClient: tfClient,
+      //   //path : 'http://resources.robotwebtools.org/turtlebot_description/',
       //   rootObject: this.viewer3d.scene,
       // });
 
@@ -561,14 +888,14 @@ export default {
       this.setPoseSrv = new ROSLIB.Service({
         ros: this.rbServer,
         name: "/set_pose",
-        serviceType: "agv_interface/poseesstimate",
+        serviceType: "agv_interface/poseestimate",
       });
 
-      this.setPoseSrv = new ROSLIB.Service({
-        ros: this.rbServer,
-        name: "/set_pose",
-        serviceType: "agv_interface/poseesstimate",
-      });
+      // this.setPoseSrv = new ROSLIB.Service({
+      //   ros: this.rbServer,
+      //   name: "/set_pose",
+      //   serviceType: "agv_interface/poseestimate",
+      // });
 
       this.getPoseSrv = new ROSLIB.Service({
         ros: this.rbServer,
@@ -655,10 +982,10 @@ export default {
       //console.log("resized", width, height);
       //console.log("clientWidth" , document.getElementById("map3d").clientWidth);
       this.viewer3d.resize(
-        //  document.getElementById("map3d").offsetWidth * 0.96,
-        // (document.getElementById("map3d").offsetWidth * 0.96 * 3) / 4
-        (width / 12) * 7 * 0.9,
-        (width / 12) * 7 * 0.75 * 0.9
+        // document.getElementById("map3d").offsetWidth ,
+        //(document.getElementById("map3d").offsetWidth * 3) / 4
+        (width / 12) * 6 * 0.9,
+        (width / 12) * 6 * 0.75 * 0.9
       );
     },
     calIMU() {
@@ -667,18 +994,56 @@ export default {
         console.log(result);
       });
     },
-    saveMap(item) {
-      console.log(item);
-      this.newMapName = item.name;
-      var mapName_ = new ROSLIB.ServiceRequest({
-        mapfile: this.newMapName,
-      });
+    // saveMap(item) {
+    //   console.log(item);
+    //   this.newMapName = item.name;
+    //   var mapName_ = new ROSLIB.ServiceRequest({
+    //     mapfile: this.newMapName,
+    //   });
 
-      console.log(this.newMapName);
-      console.log(mapName_);
-      this.saveMapSrv.callService(mapName_, function (result) {
-        console.log(result);
-      });
+    //   console.log(this.newMapName);
+    //   console.log(mapName_);
+    //   this.saveMapSrv.callService(mapName_, function (result) {
+    //     console.log(result);
+    //   });
+    // },
+    checkMapDuplicate(val)
+    {
+      return val.name == this.newMapName;
+    },
+    
+    saveMap(){ 
+      if( this.newMapName !=="")
+      {
+        const result = this.mapNames.find(this.checkMapDuplicate);
+        if(result == undefined)
+        {
+          //this.names.push({name:this.newMapName});      
+          this.mapNames.push({name:this.newMapName});      
+          console.log('Save Map');
+
+          //this.$emit("mapSave", {name: this.newMapName});
+          var mapName_ = new ROSLIB.ServiceRequest({
+            mapfile: this.newMapName,
+          });
+
+          console.log(this.newMapName);
+          console.log(mapName_);
+          this.saveMapSrv.callService(mapName_, function (result) {
+            console.log(result);
+            this.loadMap();
+          });
+          
+          this.newMapName = "";
+          // this.dialog = false;
+        }
+        else
+        {
+          alert('Existing map name.')
+        }
+
+      }
+      
     },
     setPose() {
       this.setPoseSrv.callService(this.onMarkerSrvReq, function (result) {
@@ -712,9 +1077,9 @@ export default {
               }
               //g_waypoints.push(['none', 'NONE'])
               if (result.length == 0) {
-                this.isWaypointAvaliable = false;
+                this.isWaypointAvailable = false;
               } else {
-                this.isWaypointAvaliable = true;
+                this.isWaypointAvailable = true;
               }
               result.waypointname.forEach((fn) => {
                 var item = {
@@ -775,25 +1140,39 @@ export default {
     },
     updatePose() {
       if (this.isPose == true) {
-        this.showPoseMarkerSrv.callService(this.onMarker, function (result) {
-          console.log(result);
-        });
+        this.showPoseMarkerSrv.callService(
+          this.onMarkerSrvReq,
+          function (result) {
+            console.log("updatePose(): ", result);
+          }
+        );
+        //this.isPose = false; //wut add
       } else {
-        this.showPoseMarkerSrv.callService(this.offMarker, function (result) {
-          console.log(result);
-        });
+        this.showPoseMarkerSrv.callService(
+          this.offMarkerSrvReq,
+          function (result) {
+            console.log("updatePose():", result);
+          }
+        );
+        //this.isPose = true; //wut add
       }
       console.log(this.isPose);
     },
     updateWaypoint() {
       if (this.isWaypoint == true) {
-        this.showNavMarkerSrv.callService(this.onMarker, function (result) {
-          console.log(result);
-        });
+        this.showNavMarkerSrv.callService(
+          this.onMarkerSrvReq,
+          function (result) {
+            console.log("updateWaypoint():", result);
+          }
+        );
       } else {
-        this.showNavMarkerSrv.callService(this.offMarker, function (result) {
-          console.log(result);
-        });
+        this.showNavMarkerSrv.callService(
+          this.offMarkerSrvReq,
+          function (result) {
+            console.log("updateWaypoint():", result);
+          }
+        );
       }
       console.log(this.isWaypoint);
     },
@@ -858,8 +1237,8 @@ export default {
     deleteAMap(item) {
       console.log("Delete map");
       console.log(item);
-      this.selectedMap = item.name;
-
+      this.selectedMap = item;
+      console.log(this.selectedMap);
       var delMapParam = new ROSLIB.ServiceRequest({
         mapfile: this.selectedMap,
       });
@@ -894,9 +1273,9 @@ export default {
               }
               //g_waypoints.push(['none', 'NONE'])
               if (result.length == 0) {
-                this.isWaypointAvaliable = false;
+                this.isWaypointAvailable = false;
               } else {
-                this.isWaypointAvaliable = true;
+                this.isWaypointAvailable = true;
               }
               result.waypointname.forEach((fn) => {
                 var item = {
@@ -939,9 +1318,9 @@ export default {
             }
             //g_waypoints.push(['none', 'NONE'])
             if (result.length == 0) {
-              this.isWaypointAvaliable = false;
+              this.isWaypointAvailable = false;
             } else {
-              this.isWaypointAvaliable = true;
+              this.isWaypointAvailable = true;
             }
             result.waypointname.forEach((fn) => {
               var item = {
@@ -982,73 +1361,137 @@ export default {
     },
 
     slamClick() {
-      this.emrModeName = "SLAM";
-      this.isSLAM = true;
-      this.isNav = false;
+      if (this.emrModeName == "SLAM") {
+        this.emrModeName = "";
+        this.isSLAM = false;
+        this.isNav = false;
 
-      // off navigation mode first
-      if (this.isNav == false) {
-        this.startNavSrv.callService(this.offNavSrvReq, function (result) {
-          console.log(result);
-        });
-      }
-      //--------------------------
-      if (this.isSLAM == true) {
-        this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
-          console.log(result);
-        });
-        //this.$store.commit("setIsSlamRunning", true);
-      }
-    },
-    navClick() {
-      this.emrModeName = "Navigation";
-      this.isSLAM = false;
-      this.isNav = true;
-
-      // off slam mode first
-      if (this.isSlam == false) {
-        this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
-          console.log(result);
-        });
-      }
-      //-----------------------
-
-      if (this.isNav == true) {
-        if (this.selectedMap == "") {
-          this.$alert("Choose a map first");
-          this.isNav = false;
-          console.log("After dialog");
-          console.log(this.isNav);
-        } else {
-          this.startNavSrv.callService(this.onNavSrvReq, function (result) {
+        // off slam mode first
+        if (this.isSlam == false) {
+          this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
             console.log(result);
           });
-          //this.$store.commit("setIsNavRunning", true);
+        }
+        //-----------------------
+      } else {
+        this.emrModeName = "SLAM";
+        this.isSLAM = true;
+        this.isNav = false;
+
+        // off navigation mode first
+        if (this.isNav == false) {
+          this.startNavSrv.callService(this.offNavSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+        //--------------------------
+        if (this.isSLAM == true) {
+          this.startSLAMSrv.callService(this.onSlamSrvReq, function (result) {
+            console.log(result);
+          });
+          //this.$store.commit("setIsSlamRunning", true);
         }
       }
     },
-    useMap(item) {
-      console.log("Use map");
-      console.log(item);
-      this.selectedMap = item.name;
+    navClick() {
+      if (this.emrModeName == "Navigation") {
+        this.emrModeName = "";
+        this.isSLAM = false;
+        this.isNav = false;
+        // off navigation mode first
+        if (this.isNav == false) {
+          this.startNavSrv.callService(this.offNavSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+        //--------------------------
+      } else {
+        this.emrModeName = "";
+        this.isSLAM = false;
+        this.isNav = true;
 
-      console.log(this.selectedMap);
+        // off slam mode first
+        if (this.isSlam == false) {
+          this.startSLAMSrv.callService(this.offSlamSrvReq, function (result) {
+            console.log(result);
+          });
+        }
+        //-----------------------
+
+        if (this.isNav == true) {
+          console.log("navClick(1067):", this.selectedMap);
+          if (this.selectedMap == "") {
+            this.$alert("Choose a map first");
+            this.isNav = false;
+            console.log("After dialog");
+            console.log(this.isNav);
+          } else {
+            this.emrModeName = "Navigation";
+            var onNav_ = new ROSLIB.ServiceRequest({
+              onezero: 1,
+              map_file: this.selectedMap,
+            });
+            this.startNavSrv.callService(onNav_, function (result) {
+              console.log("navClick(1076):", result);
+            });
+            //this.$store.commit("setIsNavRunning", true);
+          }
+        }
+      }
     },
-    // mapSaveClick() {
-    //   console.log("Save map");
-    // },
-    // mapLoadClick() {
-    //   console.log("Load map");
-    // },
-    // mapDeleteClick() {
-    //   console.log("Delete map");
-    // },
-    // waypointAddClick() {
-    //   console.log("Add waypoint");
-    // },
-    // waypointDeleteClick() {
-    //   console.log("Delete waypoint");
-    // },
+    
+    useMap() {
+      if(this.mapSelected.length !== 0)
+      {
+        console.log("Use map : ", this.mapSelected[0].name);
+        this.selectedMap = this.mapSelected[0].name;
+        console.log(this.selectedMap);
+      }
+      
+    },
+    deleteMap(){
+      if(this.mapSelected.length !== 0){
+        console.log(this.mapSelected[0].name);
+        //this.$emit("mapDelete", this.selected[0])
+        this.deleteAMap(this.mapSelected[0].name);
+        var index = this.mapNames.indexOf(this.mapSelected[0]);
+        //console.log(index)
+        this.mapNames.splice(index,1);
+        this.mapSelected.pop();
+        
+        //this.dialog = false;
+      }
+    },
+    checkWaypointDuplicate(val) {
+      return val.name == this.newWaypointName;
+    },
+    addWaypoint() {
+      if (this.newWaypointName !== "") {
+        const result = this.waypoints.find(this.checkWaypointDuplicate);
+        console.log(result);
+        if (result == undefined) {
+          this.waypoints.push({ name: this.newWaypointName });
+          console.log("Save Waypoint");
+
+          this.newWaypointName = "";
+          // this.dialog = false;
+        } else {
+          alert("Existing waypoint name.");
+        }
+      }
+    },    
+    deleteWaypoint() {
+      if (this.waypointSelected.length !== 0) {
+        console.log(this.waypointSelected[0].name);
+
+        var index = this.waypoints.indexOf(this.waypointSelected[0]);
+        //console.log(index)
+        this.waypoints.splice(index, 1);
+        this.waypointSelected.pop();
+        // this.dialog = false;
+      }
+    },
+    
   },
 };
 </script>
