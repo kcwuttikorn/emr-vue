@@ -311,7 +311,7 @@
                                     class="elevation-1"
                                     v-model="waypointSelected"
                                     :headers="waypointHeaders"
-                                    :items="waypoints"
+                                    :items="wayPoints"
                                     item-key="name"
                                     show-select
                                     fixed-header
@@ -327,6 +327,7 @@
                             </v-card-text>
 
                             <v-card-actions>
+                              <p>{{ waypointSelected }}</p>
                               <v-spacer></v-spacer>
 
                               <v-btn
@@ -499,7 +500,7 @@ export default {
       validMap: true,
     
 
-      waypoints: [],
+      wayPoints: [],
       selectedWayPoint: "",
       waypointFields: ["selected", "name"],
       newWaypointName: "",
@@ -1063,14 +1064,14 @@ export default {
       this.getPoseSrv.callService(
         poseReq,
         function (result) {
-          console.log(result);
+          console.log("1066 :",result);
           var getwaypointparam = new ROSLIB.ServiceRequest({
             mapname: this.selectedMap,
           });
           this.getWaypointNameSrv.callService(
             getwaypointparam,
             function (result) {
-              console.log(result);
+              console.log("1073:",result);
               var dataSet = [];
               while (this.wayPoints.length > 0) {
                 this.wayPoints.pop();
@@ -1089,13 +1090,13 @@ export default {
                 this.wayPoints.push(item);
                 console.log(fn);
               });
-              console.log(dataSet);
+              console.log("Data set 1092:",dataSet);
             }.bind(this)
           );
           var getwaypointparam2 = new ROSLIB.ServiceRequest({
             name: this.selectedMap,
           });
-          this.getWayPoints.callService(getwaypointparam2, function (result) {
+          this.getWayPointsSrv.callService(getwaypointparam2, function (result) {
             console.log(result);
           });
         }.bind(this)
@@ -1159,7 +1160,7 @@ export default {
       console.log(this.isPose);
     },
     updateWaypoint() {
-      if (this.isWaypoint == true) {
+      if (this.isWayPoint == true) {
         this.showNavMarkerSrv.callService(
           this.onMarkerSrvReq,
           function (result) {
@@ -1174,7 +1175,7 @@ export default {
           }
         );
       }
-      console.log(this.isWaypoint);
+      console.log("updateWaypoint():",this.isWayPoint);
     },
     updateNav() {
       var check_nav = this.isNav;
@@ -1301,15 +1302,15 @@ export default {
         }.bind(this)
       );
     },
-    onRowMapSelected(items) {
-      if (items.length > 0) {
-        this.selectedMap = items[0].name;
-        this.$store.commit("setSelectedMapName", this.selectedMap);
-        console.log(this.selectedMap);
+    onRowMapSelected(){//items) {
+     // if (items.length > 0) {
+        //this.selectedMap = items[0].name;
+        //this.$store.commit("setSelectedMapName", this.selectedMap);
+        //console.log(this.selectedMap);
         var getwaypointparam = new ROSLIB.ServiceRequest({
           mapname: this.selectedMap,
         });
-        this.getWaypointName.callService(
+        this.getWaypointNameSrv.callService(
           getwaypointparam,
           function (result) {
             //console.log(result);
@@ -1339,7 +1340,7 @@ export default {
           console.log("Get resulte");
           console.log(result);
         });
-      }
+      //}
     },
     onRowWayPointSelected(items) {
       if (items.length > 0) {
@@ -1445,6 +1446,7 @@ export default {
       {
         console.log("Use map : ", this.mapSelected[0].name);
         this.selectedMap = this.mapSelected[0].name;
+        this.onRowMapSelected();
         console.log(this.selectedMap);
       }
       

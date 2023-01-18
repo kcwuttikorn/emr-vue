@@ -28,6 +28,8 @@
                 fixed-header
                 height="200"
                 
+                hide-default-footer
+                
               >
                 <template v-slot:top>
                   <v-switch
@@ -38,6 +40,7 @@
                 </template>
               </v-data-table>
             </v-row>
+            
             <v-row>
               <v-col cols="9">
                 <v-form ref="form" v-model="valid" lazy-validation>
@@ -108,6 +111,7 @@ export default {
         align: "center",
         sortable: false,
         value: "name",
+        width :"400px"
       },
     ],
     names: [

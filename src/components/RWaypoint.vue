@@ -43,27 +43,8 @@
 
             <v-row no-gutters class="d-flex justify-start pa-2 ma-2">
               <p>{{ selected }}</p>
-            </v-row>
-            
+            </v-row>         
 
-            <!-- <v-row no-gutters class="d-flex justify-start pa-2 ma-3">
-              <div class="purple--text pa-1">Position:</div>
-              <div class="purple--text pa-1">
-                X:
-                <span class="purple--text grey lighten-2 pa-1">0.001</span>
-              </div>
-
-              <div class="purple--text pa-1">
-                Y:
-                <span class="purple--text grey lighten-2 pa-1">0.002</span>
-              </div>
-
-              <div class="blue--text pa-1">Orientation:</div>
-              <div class="blue--text pa-1">
-                Z:
-                <span class="blue--text grey lighten-2 pa-1">0.001</span>
-              </div>
-            </v-row> -->
 
             <v-row>
               <v-col cols="9">
