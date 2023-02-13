@@ -70,9 +70,9 @@
               <v-col cols="4">
                 <div class="purple--text pa-1">
                   X:
-                  <span class="purple--text grey lighten-2 pa-1">0.001</span>
+                  <span class="purple--text grey lighten-2 pa-1">{{rbPosX}}</span>
                   Y:
-                  <span class="purple--text grey lighten-2 pa-1">0.002</span>
+                  <span class="purple--text grey lighten-2 pa-1">{{rbPosY}}</span>
                 </div>
               </v-col>
 
@@ -83,7 +83,7 @@
               <v-col cols="4">
                 <div class="blue--text pa-1">
                   Z:
-                  <span class="blue--text grey lighten-2 pa-1">0.001</span>
+                  <span class="blue--text grey lighten-2 pa-1">{{rbOriZ}}</span>
                 </div>
               </v-col>
             </v-row>
@@ -334,6 +334,7 @@
                                 small
                                 color="green darken-1"
                                 outlined
+                                @click="goGoal"
                               >
                                 <v-icon>mdi-file-download</v-icon>
                                 <span>Go</span>
@@ -438,6 +439,7 @@ import {
   MarkerClient,
   MarkerArrayClient,
   Path,
+  Grid,
 } from "ros3d";
 
 import "vue-resize/dist/vue-resize.css";
@@ -461,11 +463,11 @@ export default {
       toggle_waypoint: undefined,
       checkbox1: false,
       checkbox2: false,
-      //ws_addr: "ws://192.168.1.75:9090",     
+      ws_addr: "ws://192.168.1.75:9090", // Intel NUC at home    
 
       //ws_addr: "ws://10.222.41.248:9090",  // Pi4 Ros-Noetic at  work
 
-      ws_addr: "ws://10.222.41.159:9090", // Intel NUC
+      //ws_addr: "ws://10.222.41.159:9090", // Intel NUC at work
       colWidth: 1360,
       timer: null,
 
@@ -547,6 +549,9 @@ export default {
       isServerConnected: false,
       publishImmediately: true,
       g_pose: null,
+      rbPosX: 0,
+      rbPosY: 0,
+      rbOriZ: 0,
 
       //--- Ros Topic ------
       cmdVelTopic: null,
@@ -626,8 +631,8 @@ export default {
     manager.on(
       "move",
       function (event, nipple) {
-        var max_linear = 1.0; //5.0; // m/s
-        var max_angular = 1.0; //2.0; // rad/s
+        var max_linear = 0.5; //5.0; // m/s
+        var max_angular = 0.5; //2.0; // rad/s
         var max_distance = 75.0; // pixels;
         this.linear_speed =
           (Math.sin(nipple.angle.radian) * max_linear * nipple.distance) /
@@ -685,10 +690,14 @@ export default {
         //height: 480,
 
         antialias: true,
-        //background: '#CFD8DC',
+        //background: '#efefef',
+        near:true,
         cameraPose: { x: 0, y: 0, z: 10 },
         //displayPanAndZoomFrame: false,
       });
+
+      //this.Viewer.addObject(new ros3d.Grid());
+
       //window.innerWidth
       this.viewer3d.resize(
         //window.innerWidth*3/4, window.innerHeight*0.8
@@ -737,7 +746,7 @@ export default {
       // new UrdfClient({
       //   ros: this.rbServer,
       //   tfClient: tfClient,
-      //   //path : 'http://resources.robotwebtools.org/turtlebot_description/',
+      //   path : 'http://resources.robotwebtools.org/',
       //   rootObject: this.viewer3d.scene,
       // });
 
@@ -800,10 +809,16 @@ export default {
         topic: "/move_base_flex/GlobalPlanner/plan",
       });
       this.viewer3d.addObject(pathDisplay);
-      /*
+
+      this.actionClient = new ROSLIB.ActionClient({
+        ros: this.rbServer,
+        actionName: "move_base_msgs/MoveBaseAction",
+        serverName: "/move_base",
+      });
+      
       var move_base_status_listener = new ROSLIB.Topic({
         ros: this.rbServer,
-        name: move_base_status,
+        name: "move_base/status",
         messageType: "actionlib_msgs/GoalStatusArray",
       });
 
@@ -823,7 +838,25 @@ export default {
           }
         }.bind(this)
       );
-*/
+
+      var robot_pose_listener = new ROSLIB.Topic({
+        ros: this.rbServer,
+        name: "/odom",
+        messageType: "nav_msgs/Odometry",
+      });
+      robot_pose_listener.subscribe(
+        function(msgs){
+          //console.log(msgs.pose.pose.position)
+          var px = msgs.pose.pose.position.x *100;
+          var py = msgs.pose.pose.position.y *100;
+          var oz = msgs.pose.pose.orientation.z *100;
+
+          this.rbPosX = px.toFixed(3);
+          this.rbPosY = py.toFixed(3);
+          this.rbOriZ = oz.toFixed(3);
+        }.bind(this)
+      );
+
 
       //----- Ros Service ---------
       this.getMapSrv = new ROSLIB.Service({
@@ -892,11 +925,7 @@ export default {
         serviceType: "agv_interface/poseestimate",
       });
 
-      // this.setPoseSrv = new ROSLIB.Service({
-      //   ros: this.rbServer,
-      //   name: "/set_pose",
-      //   serviceType: "agv_interface/poseestimate",
-      // });
+     
 
       this.getPoseSrv = new ROSLIB.Service({
         ros: this.rbServer,
@@ -1102,6 +1131,18 @@ export default {
         }.bind(this)
       );
     },
+    goGoal()
+    {
+      if(this.waypointSelected.length !==0)
+      {
+        console.log("Selected waypoint : ", this.waypointSelected[0].name);
+        this.selectedWayPoint = this.waypointSelected[0].name;
+        this.onRowWayPointSelected();
+        console.log(this.selectedWayPoint);
+
+        this.goToWaypoint();
+      }     
+    },
     goToWaypoint() {
       // create a goal
       console.log("send goal");
@@ -1251,20 +1292,24 @@ export default {
         }.bind(this)
       );
     },
-    deleteAWaypoint() {
-      console.log("Delete waypoint");
+    deleteAWaypoint(map, waypoint) {
+      console.log("Delete waypoint: ", map, waypoint);
+      this.selectedMap = map;
+      this.selectedWayPoint = waypoint;
+      console.log("Delete waypoint: ", this.selectedMap, this.selectedWayPointt);
+
       var delWaypointParam = new ROSLIB.ServiceRequest({
         mapfile: this.selectedMap,
         waypoint: this.selectedWayPoint,
       });
-      this.deleteWaypoint.callService(
+      this.deleteWaypointSrv.callService(
         delWaypointParam,
         function (result) {
           var getwaypointparam = new ROSLIB.ServiceRequest({
             mapname: this.selectedMap,
           });
           console.log(result);
-          this.getWaypointName.callService(
+          this.getWaypointNameSrv.callService(
             getwaypointparam,
             function (result) {
               console.log(result);
@@ -1342,10 +1387,13 @@ export default {
         });
       //}
     },
-    onRowWayPointSelected(items) {
-      if (items.length > 0) {
-        this.selectedWayPoint = items[0].name;
-        this.$store.commit("setSelectedWayPoint", this.selectedWayPoint);
+    onRowWayPointSelected(){//(items) {
+      //if (items.length > 0) {
+      //  this.selectedWayPoint = items[0].name;
+
+      //  console.log(this.selectedWayPoint);
+
+        //this.$store.commit("setSelectedWayPoint", this.selectedWayPoint);
         var getwaypointparam = new ROSLIB.ServiceRequest({
           name: this.selectedWayPoint,
           mapname: this.selectedMap,
@@ -1358,7 +1406,7 @@ export default {
           }.bind(this)
         );
         console.log(this.selectedWayPoint);
-      }
+     // }
     },
 
     slamClick() {
@@ -1485,10 +1533,13 @@ export default {
     deleteWaypoint() {
       if (this.waypointSelected.length !== 0) {
         console.log(this.waypointSelected[0].name);
+        
+        //  add deleteWaypoint function here
+        this.deleteAWaypoint(this.mapSelected[0].name, this.waypointSelected[0].name);
 
-        var index = this.waypoints.indexOf(this.waypointSelected[0]);
+        var index = this.wayPoints.indexOf(this.waypointSelected[0]);
         //console.log(index)
-        this.waypoints.splice(index, 1);
+        this.wayPoints.splice(index, 1);
         this.waypointSelected.pop();
         // this.dialog = false;
       }

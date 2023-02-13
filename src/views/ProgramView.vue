@@ -375,6 +375,7 @@
 <script>
 //import './prompt';
 import Blockly from "blockly";
+import ROSLIB from "roslib";
 //const Blockly = () => import("blockly");
 //import BlocklyComponent from "../components/BlocklyComponent.vue";
 //import "../blocks/agv";
@@ -716,6 +717,9 @@ export default {
       //document.getElementById("codeGenerated").value = code;
       console.log(event);
       console.log(code);
+    },
+    runBlock(filename){
+      console.log('run blockly :', filename )
     },
   },
 };
