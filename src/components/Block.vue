@@ -1,65 +1,80 @@
 <template>
-  <div class="program">
-    <v-container fluid class="blue">
-      <!-- <h1>Blockly view</h1> -->
-      <!-- <div class="row"> -->
-      <v-row no-gutters>
-        <v-col cols="12">          
-          <v-card fluid class="yellow lighten-5 pa-1" >
-            <v-btn 
-              color="primary" 
-              elevation="2"              
-              id="run_blockly"
-              class="ma-2"
-              @click="runBlock('run_file_name.tx')"
-            >
-            Run
-            </v-btn>
-
-            <v-btn 
-              color="success" 
-              elevation="2"
-              data-toggle="modal"
-              data-target="#saveBlockyModal"
-              id="save_blockly"
-              class="ma-2"
-              @click="saveBlock('save_file_name.txt')"
-            >
-            Save
-            </v-btn>
-
-            <v-btn 
-              color="warning" 
-              elevation="2"
-              data-toggle="modal"
-              data-target="#loadBlockyModal"
-              
-              id="load_blockly"
-              class="ma-2"
-              @click="loadBlock('load_file_name.txt')"
-            >
-            Load
-            </v-btn>
-
-          </v-card>
-        </v-col>
-      </v-row>
+  <v-row justify="center">
+    <v-dialog
+      v-model="dialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition"
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn color="primary" dark v-bind="attrs" v-on="on">
+          Open Dialog
+        </v-btn>
+      </template>
 
       <v-row no-gutters>
         <v-col cols="12">
-          <v-card 
-            fluid             
-            class="cyan lighten-5 pa-1"
+          <v-card fluid class="yellow lighten-5 pa-1">  
+              <v-btn 
+                icon 
+                
+                class="ma-2"
+                @click="dialog = false"                
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            
+              <v-btn
+                color="primary"
+                elevation="2"
+                id="run_blockly"
+                class="ma-2"
+                @click="runBlock('run_file_name.tx')"
+              >
+                Run
+              </v-btn>
+
+              <v-btn
+                color="success"
+                elevation="2"
+                data-toggle="modal"
+                data-target="#saveBlockyModal"
+                id="save_blockly"
+                class="ma-2"
+                @click="saveBlock('save_file_name.txt')"
+              >
+                Save
+              </v-btn>
+
+              <v-btn
+                color="warning"
+                elevation="2"
+                data-toggle="modal"
+                data-target="#loadBlockyModal"
+                id="load_blockly"
+                class="ma-2"
+                @click="loadBlock('load_file_name.txt')"
+              >
+                Load
+              </v-btn>
+            
+                       
+
+            <!-- <v-spacer></v-spacer> -->
+          </v-card>
+
+          <v-card
+            fluid
+            class="cyan lighten-5 pa-2 ma-2"
             id="blocklyArea"
             height="75vh"
           >
-              <div
-                id="blocklyDiv"
-                ref="blocklyDiv"
-                style="width: 100%; height: 100%; background-color: blue;" 
-              ></div>
-           
-              <xml id="toolbox" ref="toolbox" style="display: none" >
+            <div 
+              id="blocklyDiv2" 
+              ref="blocklyDiv2" 
+              style="width: 100%; height: 100%; background-color: blue;"
+            ></div>
+            <xml id="toolbox" ref="toolbox" style="display: none" >
                 
                 <category name="Logic" colour="%{BKY_LOGIC_HUE}">
                   <block type="controls_if"></block>
@@ -355,7 +370,6 @@
                   <block type="wait"></block>
                   <block type="emr_door"></block>
                   <block type="emr_tray"></block>
-                  <block type="emr_elevator"></block>
                   <block type="rosloop"></block>
                   
                   <block type="button1"></block>
@@ -366,27 +380,59 @@
         </v-col>
       </v-row>
 
-      <!-- </div> -->
-    </v-container>
-  </div>
+      
+      <!-- <v-card> -->
+
+      <!-- <v-toolbar dark color="primary lighten-1">
+          <v-toolbar-items>
+
+            <v-btn icon dark @click="dialog = false">
+              <v-icon>mdi-file-download</v-icon>
+              <span>Save</span>
+            </v-btn>
+            <v-toolbar-title>Save</v-toolbar-title>
+
+            <v-btn icon dark @click="dialog = false">
+              <v-icon>mdi-trash-can-outline</v-icon>
+              <span>Load</span>
+            </v-btn>
+            <v-toolbar-title>Load</v-toolbar-title>
+
+            <v-btn icon dark @click="dialog = false">
+              <v-icon right>mdi-exit-to-app</v-icon>
+              <span>Run</span>
+            </v-btn>
+          </v-toolbar-items>
+
+          <v-spacer></v-spacer>
+
+          <v-btn icon dark @click="dialog = false">
+            <v-icon>mdi-close</v-icon>            
+          </v-btn>
+          <v-toolbar-title>Close</v-toolbar-title> 
+        </v-toolbar> -->
+      <!-- </v-card> -->
+    </v-dialog>
+  </v-row>
 </template>
 
+
+
+
 <script>
-//import './prompt';
 import Blockly from "blockly";
 import ROSLIB from "roslib";
-//const Blockly = () => import("blockly");
-//import BlocklyComponent from "../components/BlocklyComponent.vue";
-//import "../blocks/agv";
 import BlocklyPython from "blockly/python";
-//import BlocklyJS from 'blockly/javascript';
 import { mapGetters } from 'vuex';
 export default {
-  components: {
-    // BlocklyComponent,
-  },
-  data: function () {
+  name: "Block",
+  data() {
     return {
+      dialog: false,
+      notifications: false,
+      sound: true,
+      widgets: false,
+
       rbServer: null,
       isServerConnected: false,
       selectedMapFile: "",
@@ -428,7 +474,7 @@ export default {
 
     this.options.toolbox = document.getElementById("toolbox");
     this.blockly_workspace = Blockly.inject(
-      this.$refs["blocklyDiv"],
+      this.$refs["blocklyDiv2"],
       this.options
     );
     window.g_blockly_workspace = this.blockly_workspace;
@@ -593,7 +639,7 @@ export default {
 
     Blockly.Blocks["rosloop"] = {
         init: function () {
-          this.appendDummyInput().appendField("EMR LOOP");
+          this.appendDummyInput().appendField("ROS LOOP");
           this.appendStatementInput("input").setCheck(null);
           this.setPreviousStatement(true, null);
           this.setNextStatement(true, null);
@@ -664,32 +710,6 @@ export default {
       return code;
       };
 
-      Blockly.Blocks['emr_elevator'] = {
-        init: function() {
-        this.appendDummyInput()
-        .appendField("go to floor")
-        .appendField(new Blockly.FieldDropdown(
-          [["1","emr_elevator_1"], 
-           ["2","emr_elevator_2"],
-           ["3","emr_elevator_3"],
-           ["4","emr_elevator_4"],
-           ["5","emr_elevator_5"]]), 
-          "emr_elevator");
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setColour(230);
-        this.setTooltip("");
-        this.setHelpUrl("");
-        }
-      };
-
-      Blockly.Python['emr_elevator'] = function(block) {
-        var dropdown_emr_elevator = block.getFieldValue('emr_elevator');
-        // TODO: Assemble Python into code variable.
-        var code = "ublock_pub.publish(" + dropdown_emr_elevator + ")\n";
-        return code;
-      };
-
 
 
     
@@ -754,8 +774,6 @@ export default {
 
     }
   },
-
-
   methods: {
     myUpdateFunction(event) {
       var code = Blockly.Python.workspaceToCode(this.blockly_workspace);
@@ -824,4 +842,3 @@ export default {
   }
 };
 </script>
-

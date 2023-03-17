@@ -245,8 +245,6 @@
                                   >
                                     
                                   </v-data-table>
-
-                                  <!-- <p>{{ mapSelected }}</p> -->
                                 </v-row>
                               </v-container>
                               <!-- <small>*indicates required field</small> -->
@@ -329,7 +327,6 @@
                                     :headers="waypointHeaders"
                                     :items="wayPoints"
                                     item-key="name"
-                                    single-select
                                     show-select
                                     fixed-header
                                     height="200"
@@ -393,9 +390,9 @@
                 </v-row>
 
                 
-                <!-- <v-row class="d-flex justify-start align-center pa-3">
+                <v-row class="d-flex justify-start align-center pa-3">
                   <Block />
-                </v-row> -->
+                </v-row>
                  
               
                 
@@ -513,29 +510,29 @@ export default {
         align: "center",
         sortable: false,
         value: "name",
-        width :"360px"
+        width :"90px"
       },
-      // {
-      //   text: "Pose X",
-      //   align: "center",
-      //   sortable: false,
-      //   value: "poseX",
-      //   width :"90px"
-      // },
-      // {
-      //   text: "Pose Y",
-      //   align: "center",
-      //   sortable: false,
-      //   value: "poseY",
-      //   width :"90px"
-      // },
-      // {
-      //   text: "Orient Z",
-      //   align: "center",
-      //   sortable: false,
-      //   value: "OrientZ",
-      //   width :"90px"
-      // },
+      {
+        text: "Pose X",
+        align: "center",
+        sortable: false,
+        value: "poseX",
+        width :"90px"
+      },
+      {
+        text: "Pose Y",
+        align: "center",
+        sortable: false,
+        value: "poseY",
+        width :"90px"
+      },
+      {
+        text: "Orient Z",
+        align: "center",
+        sortable: false,
+        value: "OrientZ",
+        width :"90px"
+      },
     ],
       seqWayPoint: 1,
       validWaypoint: true,
@@ -602,25 +599,12 @@ export default {
     //this.$store.state.modeName = 'Slam Mode';
     //this.$store.dispatch("actionModeName", "Slam Mode");
 
-    this.connected = this.getServerConnected;    
-    this.rbServer = this.getRbServer;
+    // this.connected = this.getServerConnected;
 
-    this.selectedMapFile = this.getSelectedMapName;
-    //this.mapSelected[0].name = this.getSelectedMapName;
-
-    if(this.getIsSlamRunning == true) this.emrModeName = "SLAM";
-    else if(this.getIsNavRunning == true) this.emrModeName ="Navigation";
-    else this.emrModeName ="";
-
-    if( this.connected == true) 
-    {
-      this.setup();
-      const mapname =  {'name': this.getSelectedMapName};
-      this.mapSelected[0] = mapname;
-      this.useMap();
-    }
-     
-      //console.log("viewer3d:",this.viewer3d);//this.loadMap();
+    // this.isServerConnected = this.getServerConnected;
+    // this.rbServer = this.getRbServer;
+    // this.selectedMapFile = this.getSelectedMapName;
+    //if( this.connected == true) this.loadMap();
 
     //--------------  For virtual Joy Stick Start --------------------
 
@@ -673,8 +657,6 @@ export default {
       "end",
       function () {
         console.log("Move end");
-        this.linear_speed = 0.0;
-        this.angular_speed = 0.0;
         this.stopMoveInterval();
         // if(this.timer)
         //   clearInterval(this.timer);
@@ -712,17 +694,7 @@ export default {
         //this.log = "Connection to websocket server closed";
         console.log("Connection to websocket server closed.");
       });
-      this.setup();
-      
-    },
-    disconnect: function () {
-      this.rbServer.close();
-      delete this.viewer3d;
-      this.$store.commit("setServerConnected", false);
-      location.reload();
-      console.log("ros:disconnect", this.connected, this.getServerConnected);
-    },
-    setup: function(){
+
       window.addEventListener("resize", () => {
         this.colWidth = window.innerWidth;
         //console.log("386 : col width: ", this.colWidth);
@@ -739,9 +711,9 @@ export default {
         //background: '#efefef',
         near:true,
         cameraPose: { x: 0, y: 0, z: 10 },
-        //displayPanAndZoomFrame: false,        
+        //displayPanAndZoomFrame: false,
+        
       });
-      console.log("viewer3d:",this.viewer3d);
 
       //console.log(this.viewer3d);
 
@@ -1027,6 +999,12 @@ export default {
       });
 
       this.loadMap();
+    },
+    disconnect: function () {
+      this.rbServer.close();
+      delete this.viewer3d;
+      this.$store.commit("setServerConnected", false);
+      location.reload();
     },
     move: function () {
       var twist = new ROSLIB.Message({
@@ -1421,7 +1399,7 @@ export default {
               var item = {
                 name: fn,
               };
-             this.wayPoints.push(item);  //
+              this.wayPoints.push(item);
               wn.push(item);
             });
             
@@ -1454,8 +1432,6 @@ export default {
             
 
           });
-
-          
 
           this.$store.commit("setSelectedWayPoint", wp);
 

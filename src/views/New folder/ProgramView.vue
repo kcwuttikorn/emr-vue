@@ -8,10 +8,10 @@
           <v-card fluid class="yellow lighten-5 pa-1">
             <v-btn 
               color="primary" 
-              elevation="2"
-              onclick="runBlockly(this)"
+              elevation="2"              
               id="run_blockly"
               class="ma-2"
+              @click="runBlock('run_file_name.tx')"
             >
             Run
             </v-btn>
@@ -23,6 +23,7 @@
               data-target="#saveBlockyModal"
               id="save_blockly"
               class="ma-2"
+              @click="saveBlock('save_file_name.txt')"
             >
             Save
             </v-btn>
@@ -32,9 +33,10 @@
               elevation="2"
               data-toggle="modal"
               data-target="#loadBlockyModal"
-              onclick="getFile()"
+              
               id="load_blockly"
               class="ma-2"
+              @click="loadBlock('load_file_name.txt')"
             >
             Load
             </v-btn>
@@ -58,6 +60,7 @@
               ></div>
            
               <xml id="toolbox" ref="toolbox" style="display: none" >
+                
                 <category name="Logic" colour="%{BKY_LOGIC_HUE}">
                   <block type="controls_if"></block>
                   <block type="logic_compare"></block>
@@ -67,6 +70,7 @@
                   <block type="logic_null"></block>
                   <block type="logic_ternary"></block>
                 </category>
+                
                 <category name="Loop" colour="%{BKY_LOOPS_HUE}">
                   <block type="controls_repeat_ext">
                     <value name="TIMES">
@@ -96,6 +100,7 @@
                   <block type="controls_forEach"></block>
                   <block type="controls_flow_statements"></block>
                 </category>
+                
                 <category name="Math" colour="%{BKY_MATH_HUE}">
                   <block type="math_number">
                     <field name="NUM">123</field>
@@ -197,6 +202,7 @@
                     </value>
                   </block>
                 </category>
+                
                 <category name="Text" colour="%{BKY_TEXTS_HUE}">
                   <block type="text"></block>
                   <block type="text_join"></block>
@@ -274,6 +280,7 @@
                     </value>
                   </block>
                 </category>
+                
                 <category name="List" colour="%{BKY_LISTS_HUE}">
                   <block type="lists_create_with">
                     <mutation items="0"></mutation>
@@ -327,24 +334,32 @@
                 </category>
 
                 <sep></sep>
+
                 <category
                   name="Variables"
                   colour="%{BKY_VARIABLES_HUE}"
                   custom="VARIABLE"
                 ></category>
+                
                 <category
                   name="Functions"
                   colour="%{BKY_PROCEDURES_HUE}"
                   custom="PROCEDURE"
                 ></category>
-                <category name="AGV Control" colour="%{BKY_LISTS_HUE}">
-                  <block type="agv_init"></block>
-                  <block type="move_to"></block>
-                  <!--<block type="move_to_preset"></block>-->
-                  <block type="rospy_loop"></block>
-                  <block type="sleep_type"></block>
+
+                <category name="EMR Control" colour="%{BKY_LISTS_HUE}">
+                  <block type="emr_init"></block>
+                  <block type="emr_move"></block>
+                  <block type="emr_move_to"></block>
+                  <block type="emr_wait_goal"></block>
+                  <block type="wait"></block>
+                  <block type="emr_door"></block>
+                  <block type="emr_tray"></block>
+                  <block type="rosloop"></block>
+                  
                   <block type="button1"></block>
                 </category>
+
               </xml>
           </v-card>
         </v-col>
@@ -354,26 +369,35 @@
     </v-container>
   </div>
 </template>
+
 <script>
 //import './prompt';
 import Blockly from "blockly";
+import ROSLIB from "roslib";
 //const Blockly = () => import("blockly");
 //import BlocklyComponent from "../components/BlocklyComponent.vue";
 //import "../blocks/agv";
 import BlocklyPython from "blockly/python";
 //import BlocklyJS from 'blockly/javascript';
+import { mapGetters } from 'vuex';
 export default {
   components: {
     // BlocklyComponent,
   },
   data: function () {
     return {
+      rbServer: null,
+      isServerConnected: false,
+      selectedMapFile: "",
+      selectedWaypointFile: "",
+      mymessage:"",
+
       blockly_workspace: null,
       options: {
         //media: "../assets",
         horizontalLayout:false,
         toolboxPosition: "start",
-        rtl: true,
+        rtl: false,
         grid: {
           spacing: 25,
           length: 3,
@@ -392,12 +416,15 @@ export default {
         toolbox: null,
         trashcan: true,
       },
+      runBlockSrv: null,
+      loadBlockSrv: null,
+      saveBlockSrv:null,
     };
   },
   mounted() {
     this.$store.dispatch('actionModeName', 'Blockly');
     console.log("MOUNTED");
-    
+
     this.options.toolbox = document.getElementById("toolbox");
     this.blockly_workspace = Blockly.inject(
       this.$refs["blocklyDiv"],
@@ -405,111 +432,132 @@ export default {
     );
     window.g_blockly_workspace = this.blockly_workspace;
     this.blockly_workspace.addChangeListener(this.myUpdateFunction);
-    Blockly.Blocks["agv_init"] = {
-      init: function () {
-        this.appendDummyInput().appendField("AGV navigation init");
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setColour(230);
-        this.setTooltip("");
-        this.setHelpUrl("");
-      },
-    };
-    BlocklyPython["agv_init"] = function (block) {
-      // TODO: Assemble JavaScript into code variable.
-      console.log(block);
-      var code = "import rospy\n";
-      code = code + "import actionlib\n";
-      code =
-        code + "from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal\n";
-      code = code + "from std_msgs.msg import String\n";
-      code = code + "import json\n";
-      code = code + "from tinydb import TinyDB, Query\n";
-      code =
-        code + "from rospy_message_converter import json_message_converter\n";
-      code = code + "import agv\n";
-      code = code + "import time\n";
-      //code = code + "waypoint_db = TinyDB('/home/pi/db.json')\n"
-      code = code + "rospy.init_node('patrol')\n";
-      code =
-        code +
-        "client = actionlib.SimpleActionClient('move_base', MoveBaseAction)\n";
-      code = code + "client.wait_for_server()\n";
-      return code;
-    };
-    Blockly.Blocks["move_to"] = {
-      init: function () {
-        this.appendDummyInput().appendField("Move to ");
-        this.appendValueInput("map_name").setCheck("String").appendField("map");
-        this.appendValueInput("waypoint")
-          .setCheck("String")
-          .appendField("waypoint");
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setColour(230);
-        this.setTooltip("");
-        this.setHelpUrl("");
-      },
-    };
-    Blockly.Python["move_to"] = function (block) {
-      var value_map_name = Blockly.Python.valueToCode(
-        block,
-        "map_name",
-        Blockly.Python.ORDER_ATOMIC
-      );
-      var value_waypoint = Blockly.Python.valueToCode(
-        block,
-        "waypoint",
-        Blockly.Python.ORDER_ATOMIC
-      );
-      // TODO: Assemble Python into code variable.
-      var code =
-        "goal = agv.goal_pose(" +
-        value_map_name +
-        " , " +
-        value_waypoint +
-        ")\n";
-      code = code + "client.send_goal(goal)\n";
-      code = code + "client.wait_for_result()\n";
-      return code;
-    };
-    Blockly.Blocks["sleep_type"] = {
-      init: function () {
-        this.appendDummyInput().appendField("Sleep for");
-        this.appendValueInput("NAME").setCheck("Number");
-        this.appendDummyInput().appendField("sec");
-        this.setInputsInline(true);
-        this.setPreviousStatement(true, null);
-        this.setNextStatement(true, null);
-        this.setColour(230);
-        this.setTooltip("");
-        this.setHelpUrl("");
-      },
-    };
-    Blockly.Python["sleep_type"] = function (block) {
-      var value_name = Blockly.Python.valueToCode(
-        block,
-        "NAME",
-        Blockly.Python.ORDER_ATOMIC
-      );
-      // TODO: Assemble JavaScript into code variable.
-      var code = "time.sleep(" + value_name + ")\n";
-      return code;
-    };
-    Blockly.Blocks["move_to_preset"] = {
-      init: function () {
-        this.appendDummyInput().appendField("Move to ");
-        this.appendDummyInput().appendField(
-          this.$store.state.selectedMapName + " "
-        );
+    
+
+    Blockly.Blocks['emr_init'] = {
+        init: function() {
         this.appendDummyInput()
-          .appendField("waypoint")
-          .appendField(
-            new Blockly.FieldDropdown(this.generateOptions),
-            "WAYPOINT"
-          );
+        .appendField("EMR node start");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(230);
+        this.setTooltip("");
+        this.setHelpUrl("");
+        }
+      };
+
+    Blockly.Python['emr_init'] = function(block) {
+        // TODO: Assemble Python into code variable.
+        var code = "#!/usr/bin/env python3\n"+
+                   "import rospy\n"+
+                   "from std_msgs.msg import String\n"+
+                   "import actionlib\n"+
+
+                   "import json\n"+
+                   "from tinydb import TinyDB, Query\n"+
+                   "from rospy_message_converter import json_message_converter\n"+
+
+                   "from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal\n"+
+                   "rospy.init_node('blockly_control_node', anonymous=True)\n\n"+
+
+                   "client = actionlib.SimpleActionClient('move_base',MoveBaseAction)\n"+
+                   "client.wait_for_server()\n\n"+
+
+                   "ublock_pub = rospy.Publisher('ublock', String, queue_size=10)\n\n"+
+                   "goal = MoveBaseGoal()\n"+
+                   "goal.target_pose.header.frame_id = 'map'\n"+
+                   "goal.target_pose.header.stamp = rospy.Time.now()\n\n" ;
+
+        return code;
+      };
+
+
+    Blockly.Blocks['emr_move'] = {
+        init: function() {
+          this.appendDummyInput()
+              .appendField("Move to");
+          this.appendDummyInput()
+              // .appendField(new Blockly.FieldTextInput("map"), "map")
+              .appendField(": x")
+              .appendField(new Blockly.FieldNumber(0), "x")
+              .appendField(", y")
+              .appendField(new Blockly.FieldNumber(0), "y")
+              .appendField(", w")
+              .appendField(new Blockly.FieldNumber(1), "w");
+          this.setInputsInline(true);
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+          this.setColour(230);
+       this.setTooltip("");
+       this.setHelpUrl("");
+        }
+      };
+
+      Blockly.Python['emr_move'] = function(block) {
+        // var text_map = block.getFieldValue('map');
+        var number_x = block.getFieldValue('x');
+        var number_y = block.getFieldValue('y');
+        var number_w = block.getFieldValue('w');
+        // TODO: Assemble Python into code variable.
+
+        var code = "goal.target_pose.pose.position.x = " + number_x +"\ngoal.target_pose.pose.position.y =" + number_y +"\ngoal.target_pose.pose.orientation.w = " + number_w +"\n\n";
+
+        code = code + "client.send_goal(goal)\n"
+
+           return code;
+      };
+
+      Blockly.Blocks['emr_wait_goal'] = {
+        init: function() {
+          this.appendDummyInput()
+              .appendField("wait for robot move to goal");
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+          this.setColour(230);
+          this.setTooltip("");
+          this.setHelpUrl("");
+        }
+      };
+
+      Blockly.Python['emr_wait_goal'] = function(block) {
+        // TODO: Assemble Python into code variable.
+        var code = "wait = client.wait_for_result()\n\n" ;     
+           return code;
+      };
+
+
+      Blockly.Blocks["wait"] = {
+        init: function () {
+          this.appendDummyInput()
+          .appendField("wait (sleep)")
+          .appendField(new Blockly.FieldNumber(1), "time")
+          .appendField("sec");
+          
+          // this.appendValueInput("time").setCheck(null);
+          // this.appendDummyInput().appendField("sec");
+          this.setInputsInline(true);
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+          this.setColour(230);
+          this.setTooltip("");
+          this.setHelpUrl("");
+        },
+      };
+
+      Blockly.Python["wait"] = function (block) {
+        var value_time = block.getFieldValue('time');
+        // TODO: Assemble Python into code variable.
+        var code = "rospy.sleep(" + value_time + ")\n";
+        return code;
+      };
+
+
+    var waypointdata = this.$store.state.selectedWayPoint;
+    Blockly.Blocks["emr_move_to"] = {
+      init: function () {
+         this.appendDummyInput()
+        .appendField("Move to ")
+        .appendField(new Blockly.FieldDropdown(this.generateOptions), 'emr_target');
         this.setInputsInline(true);
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -517,51 +565,107 @@ export default {
         this.setTooltip("");
         this.setHelpUrl("");
       },
+
       generateOptions: function () {
         var options = [];
-        var g_waypoints = this.$store.state.selectedWayPoints;
-        for (var i = 0; i < g_waypoints.length; i++) {
-          options.push([g_waypoints[i].name, g_waypoints[i].name]);
+        for (let key in waypointdata){
+          options.push([waypointdata[key].name , key]); 
         }
         return options;
-      },
+      }
     };
-    Blockly.Python["move_to_preset"] = function (block) {
-      /*var value_waypoint = Blockly.Python.valueToCode(block, 'waypoint', Blockly.Python
-                  .ORDER_ATOMIC);*/
-      var value_waypoint = block.getFieldValue("WAYPOINT");
-      // TODO: Assemble Python into code variable.
-      var code =
-        'goal = agv.goal_pose("' +
-        this.$store.state.selectedMapName +
-        '" , "' +
-        value_waypoint +
-        '")\n';
-      code = code + "client.send_goal(goal)\n";
-      code = code + "client.wait_for_result()\n";
+
+    Blockly.Python["emr_move_to"] = function (block) {
+      var dropdown_emr_target = block.getFieldValue('emr_target');
+      var code = "goal.target_pose.pose.position.x = " + waypointdata[dropdown_emr_target].pose.position.x
+      +"\ngoal.target_pose.pose.position.y ="  + waypointdata[dropdown_emr_target].pose.position.y
+      +"\ngoal.target_pose.pose.position.z ="  + waypointdata[dropdown_emr_target].pose.position.z
+      +"\ngoal.target_pose.pose.orientation.x ="  + waypointdata[dropdown_emr_target].pose.orientation.x
+      +"\ngoal.target_pose.pose.orientation.y ="  + waypointdata[dropdown_emr_target].pose.orientation.y
+      +"\ngoal.target_pose.pose.orientation.z ="  + waypointdata[dropdown_emr_target].pose.orientation.z
+      +"\ngoal.target_pose.pose.orientation.w ="  + waypointdata[dropdown_emr_target].pose.orientation.w
+      +"\n";
+      code = code + "client.send_goal(goal)\n"
       return code;
     };
-    Blockly.Blocks["rospy_loop"] = {
-      init: function () {
-        this.appendDummyInput().appendField("ROS FOEVER LOOP");
-        this.appendStatementInput("DO")
-          .setCheck(null)
-          .setAlign(Blockly.ALIGN_RIGHT);
+
+
+    Blockly.Blocks["rosloop"] = {
+        init: function () {
+          this.appendDummyInput().appendField("ROS LOOP");
+          this.appendStatementInput("input").setCheck(null);
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+          this.setColour(230);
+          this.setTooltip("");
+          this.setHelpUrl("");
+        },
+      };
+
+    Blockly.Python["rosloop"] = function (block) {
+      var statements_input = Blockly.Python.statementToCode(block, "input");
+      // TODO: Assemble Python into code variable.
+      var code = "while not rospy.is_shutdown():\n";
+      code = code + statements_input;
+      return code;
+    };
+
+
+    Blockly.Blocks['emr_door'] = {
+        init: function() {
+        this.appendDummyInput()
+        .appendField("EMR door")
+        .appendField(new Blockly.FieldDropdown(
+          [["open","emr_door_open"], 
+           ["close","emr_door_close"]]), 
+          "emr_door");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
         this.setColour(230);
         this.setTooltip("");
         this.setHelpUrl("");
-      },
-    };
-    Blockly.Python["rospy_loop"] = function (block) {
-      //var statements_name = Blockly.Python.statementToCode(block, "NAME");
+        }
+      };
+
+    Blockly.Python['emr_door'] = function(block) {
+      var dropdown_emr_door = block.getFieldValue('emr_door');
       // TODO: Assemble Python into code variable.
-      var branch = Blockly.Python.statementToCode(block, "DO");
-      branch = Blockly.Python.addLoopTrap(branch, block) || Blockly.Python.PASS;
-      var code = "while not rospy.is_shutdown():\n" + branch;
+      var code = "ublock_pub.publish('" + dropdown_emr_door + "')\n";
       return code;
     };
+
+    Blockly.Blocks['emr_tray'] = {
+        init: function() {
+        this.appendDummyInput()
+        .appendField("EMR tray")
+        .appendField(new Blockly.FieldDropdown(
+          [["#1","emr_tray1"], 
+           ["#2","emr_tray2"], 
+           ["#3","emr_tray3"]]), 
+          "emr_tray")
+        .appendField(new Blockly.FieldDropdown(
+          [["out","_out"], 
+           ["in","_in"]]), 
+          "action");
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+        this.setColour(230);
+        this.setTooltip("");
+        this.setHelpUrl("");
+        }
+      };
+
+    Blockly.Python['emr_tray'] = function(block) {
+      var dropdown_emr_tray = block.getFieldValue('emr_tray');
+      var dropdown_action = block.getFieldValue('action');
+      // TODO: Assemble Python into code variable.
+      var code = "ublock_pub.publish('" + dropdown_emr_tray + dropdown_action + "')\n";
+      return code;
+      };
+
+
+
+    
     Blockly.Blocks["button1"] = {
       init: function () {
         this.appendDummyInput().appendField("Button 1");
@@ -577,7 +681,54 @@ export default {
       // TODO: Change ORDER_NONE to the correct strength.
       return [code, Blockly.Python.ORDER_NONE];
     };
+
+    console.log("isServerConnected : ", this.isServerConnected)
+    this.isServerConnected = this.getServerConnected;
+    this.rbServer = this.getRbServer;
+    this.selectedMapFile = this.getSelectedMapName;
+    //this.selectedWaypointFile = this.getSelectedWayPoint;
+    
+
+    console.log("isServerConnected : ", this.isServerConnected)
+    if(this.isServerConnected ===true){
+
+
+      //----------  Ros Service -----------//
+      this.runBlockSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "run_block",
+        serviceType: "agv_interface/runblock"
+      });
+
+      this.saveBlockSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "save_block",
+        serviceType: "agv_interface/saveblock"
+      });
+
+      this.loadBlockSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "load_block",
+        serviceType: "agv_interface/loadblock"
+      });
+
+
+      this.getWayPointsSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_waypoint",
+        serviceType: "agv_interface/waypointsarray",
+      });
+
+      this.getWayPointNameSrv = new ROSLIB.Service({
+        ros: this.rbServer,
+        name: "/get_waypoint_name",
+        serviceType: "agv_interface/waypointname",
+      });
+
+    }
   },
+
+
   methods: {
     myUpdateFunction(event) {
       var code = Blockly.Python.workspaceToCode(this.blockly_workspace);
@@ -585,7 +736,65 @@ export default {
       console.log(event);
       console.log(code);
     },
+ 
+    runBlock(filename){
+      var runBlockParam = new ROSLIB.ServiceRequest({
+        mapfile: this.selectedMapFile,
+        waypointfile: this.selectedWaypointFile
+      });
+
+      var code = Blockly.Python.workspaceToCode(this.blockly_workspace);
+      console.log(code);
+      
+      // runBlockParam.mapfile = Blockly.Python.workspaeToCode(this.blockly_workspace);c
+
+      runBlockParam.mapfile = code;
+
+      console.log('run blockly : ', runBlockParam );
+
+      this.runBlockSrv.callService(runBlockParam, function(reult){
+        console.log(reult);
+      });
+    },
+
+    saveBlock(filename){
+      var saveBlockParam = new ROSLIB.ServiceRequest({
+        mapfile: this.selectedMapFile,
+        waypointfile: this.selectedWaypointFile,
+        message : ""
+      });
+
+      var xml = Blockly.Xml.workspaceToDom(this.blockly_workspace);
+      console.log(xml);
+      saveBlockParam.message = new XMLSerializer().serializeToString(xml);
+      console.log('save block');
+
+      // send saveBlockParan message to agvctl.py and get return as result
+      this.saveBlockSrv.callService(saveBlockParam, function(reult){
+        console.log(reult);   // show return from agvctl.py
+      });   
+    },
+    
+    loadBlock(){
+      var loadBlockParam = new ROSLIB.ServiceRequest({
+        mapfile: this.selectedMapFile,
+        waypointfile: this.selectedWaypointFile
+      });
+      console.log('load block');
+      this.loadBlockSrv.callService(loadBlockParam, function(reult){
+        Blockly.mainWorkspace.clear();
+        Blockly.Xml.domToWorkspace(
+          Blockly.Xml.textToDom(reult.status),
+          Blockly.mainWorkspace
+        );
+      });
+      
+    }
   },
+
+  computed:{
+    ...mapGetters(["getRbServer", "getServerConnected", "getIsSlamRunning", "getIsNavRunning", "getSelectedMapName", "getSelectedWayPoint"])
+  }
 };
 </script>
 

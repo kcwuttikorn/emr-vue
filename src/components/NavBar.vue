@@ -20,6 +20,10 @@
           <v-toolbar-title class="text-uppercase white--grey">
             <!-- <span class="font-weight-light">Emr-</span> -->
             <!-- <span>{{ $store.state.modeName }}</span> -->
+            <nav>
+              <router-link to="/" class="font-weight-light black--text">Home</router-link> | 
+              <router-link to="/program" class="font-weight-light black--text">Blockly</router-link>
+            </nav>
           </v-toolbar-title>
         </v-col>
 
@@ -44,7 +48,7 @@
       </v-btn> -->
     </v-app-bar>
 
-    <v-navigation-drawer
+    <!-- <v-navigation-drawer
       v-model="drawer"
       app
       class="primary lighten-2"
@@ -90,7 +94,7 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
   </v-card>
 </template>
 
