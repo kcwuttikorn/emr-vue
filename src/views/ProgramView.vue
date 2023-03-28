@@ -669,11 +669,12 @@ export default {
         this.appendDummyInput()
         .appendField("go to floor")
         .appendField(new Blockly.FieldDropdown(
-          [["1","emr_elevator_1"], 
-           ["2","emr_elevator_2"],
-           ["3","emr_elevator_3"],
-           ["4","emr_elevator_4"],
-           ["5","emr_elevator_5"]]), 
+          [["1","f1"], 
+           ["2","f2"],
+           ["3","f3"],
+           ["4","f4"],
+           ["5","f5"],
+           ["6","f6"]]), 
           "emr_elevator");
         this.setPreviousStatement(true, null);
         this.setNextStatement(true, null);
@@ -686,7 +687,8 @@ export default {
       Blockly.Python['emr_elevator'] = function(block) {
         var dropdown_emr_elevator = block.getFieldValue('emr_elevator');
         // TODO: Assemble Python into code variable.
-        var code = "ublock_pub.publish(" + dropdown_emr_elevator + ")\n";
+        var code = "ublock_pub.publish('" + dropdown_emr_elevator + "')\n";
+            code = code + "rospy.sleep(1)\n"
         return code;
       };
 
