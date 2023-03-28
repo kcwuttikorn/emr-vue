@@ -425,7 +425,7 @@
 //import { useWindowSize } from 'vue-window-size';
 //import RMap from "../components/RMap.vue";
 //import RWaypoint from "../components/RWaypoint.vue";
-import Block from "../components/Block.vue";
+//import Block from "../components/Block.vue";
 
 import ROSLIB from "roslib";
 import {
@@ -592,7 +592,7 @@ export default {
   },
   components: {
     ResizeObserver,
-    Block,
+    //Block,
     //RMap,
     //RWaypoint,
   },
